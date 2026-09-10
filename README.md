@@ -1,20 +1,31 @@
 # Bor's Drop-in Utils (OpenMW)
 
-My collection of drop-in modules that can be added to any projects for either performance or convenience.
+My collection of drop-in modules that can be added to any OpenMW Lua projects for either performance or convenience.
 
-**It's neither a playable mod nor a dependency for something else. It's just a collection of code snippets one could add to their project.**
+**It's neither a playable mod nor a dependency for something else. It's just a collection of standalone modules for OpenMW Lua API others could add to their projects.**
 
-Core premise of this collection is that you can freely drop these lua files in your project and immediately use them. No weird configuration steps, no bullshit - just `require()` them from the correct scope and you're good to go.
+**Free to use, modify and redistribute. No permissions required, but a mention of the project is appreciated.**
 
-I believe that these utilities being accessible can and will make community mods better for everyone - developers and users alike. 
+Core premise of this collection is that you can freely drop these lua files in your project and immediately use them. No weird configuration steps, no bullshit - just `require()` them or register in the correct scope and you're good to go.
+
+I believe that the accessibility these utilities can and will make community mods better for everyone - developers and users alike.
 
 ## Table of Contents
 
-- [Settings Cache](#settings-cache)
-- [Hard Dependency Checker](#hard-dependency-checker)
-- [Message Picker](#message-picker)
-- [Yaml Folder Parser](#yaml-folder-parser)
+- [General Utils](#general-utils)
+    - [Settings Cache](#settings-cache)
+    - [Hard Dependency Checker](#hard-dependency-checker)
+    - [Message Picker](#message-picker)
+    - [Yaml Folder Parser](#yaml-folder-parser)
+- [Settings Renderers](#settings-renderers)
+    - [Text Set](#text-set)
+    - [Multicheckbox](#multicheckbox)
 - [Other Neat Things](#other-neat-things)
+    - [Virtual List](#virtual-list)
+    - [Super Settings Renderers](#super-settings-renderers)
+    - [Sorre's Custom Renderers](#sorres-settings-renderers)
+
+## General Utils
 
 ### Settings Cache
 
@@ -32,12 +43,12 @@ local storage = require("openmw.storage")
 local settingsCache = require("scripts.MyMod.utils.settingsCache")
 
 local settings = settingsCache.new(
-  storage.playerSection("SettingsMyMod_section1"),
-  async,
-  -- optional onChange handler
-  function(key)
-    if key == "someKey" then doSomething(settings.someKey)
-  end
+    storage.playerSection("SettingsMyMod_mySection"),
+    async,
+    -- optional onChange handler
+    function(key)
+        if key == "someKey" then doSomething(settings.someKey)
+    end
 )
 
 print(settings.someKey)
@@ -59,8 +70,7 @@ deps.checkAll("My Cool and Awesome Mod", {
     {
         plugin = "FollowerDetectionUtil.omwscripts",
         interface = I.FollowerDetectionUtil, -- if the dependency has to be initialized before the mod
-        -- optional interface version checking
-        minVersion = 3,
+        minVersion = 3, -- optional interface version checking
         currVersion = I.FollowerDetectionUtil
             and I.FollowerDetectionUtil.version
             or -1
@@ -74,7 +84,7 @@ deps.checkAll("My Cool and Awesome Mod", {
 
 Demo:
 
--- TODO
+TODO
 <img src="media/dependencyCheckerMessage.png">
 <img src="media/dependencyCheckerLog.png">
 
@@ -105,7 +115,33 @@ msg_helloWorld_4: Hello {who}!
 
 > Note: if you want to add it to NPC or Creature, initialize it in Global script and then pass it via addScript() -> onInit chain. This will save you performance in a long run.
 
-Interops are great, but making a separate mod to just add a table to an interface is not elegant and probably inconvenient for non-tech savvy part of the community. But creating one single plain text file makes sense for this way more. The only thing preventing me from adding it everywhere was not having a good boilerplate template. Until now :D
+Interops are great, but making a separate mod to just add a table to an interface is not elegant and probably inconvenient for non-tech savvy part of the community. But creating one single plain text file makes way more sense. The only thing preventing me from adding it everywhere was not having a good boilerplate template. Until now :D
+
+Usage example:
+
+```lua
+-- TODO
+```
+
+## Settings Renderers
+
+> Scope: Menu, Player or Global
+
+You just drop these renderers in your project, add them to your .omwscripts and use them as any other settings renderer.
+
+### Text Set
+
+This is a fixed and modified versiong of AttendMeList from [Attend Me](https://www.nexusmods.com/morrowind/mods/51232). Basically it's a renderer for making lookup tables. By deafult it is designed for storing different record ids, but it can easily be modified to have custom behaviour for parsing input - from capitalizing text to adding your current cell id to the list if the input field is empty.
+
+Usage example:
+
+```lua
+-- TODO
+```
+
+### Multicheckbox
+
+This is a modified version of Multiselect from [Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808) designed to make the renderer more readable, more pleasing to look at and require less boilerplate to set up. An arbitrary amount of checkboxes crammed into one single renderer/setting position.
 
 Usage example:
 
@@ -115,13 +151,16 @@ Usage example:
 
 ## Other Neat Things
 
-These are not made by me, but they share the idea I have here.
+These are not made by me, but they share the idea of this project.
 
-### [Virtual List](github.com/Greatness7/openmw_virtual_list/tree/main) by Greatness7
+### Virtual List
+
+By Greatness7.  
+[GitHub](https://github.com/Greatness7/openmw_virtual_list/tree/main)
 
 This library provides a performant virtual-list widget for use in OpenMW-lua mods.
 
-It takes care of a lot of annoying complexities so you don't have to. Things like:    
+It takes care of a lot of annoying complexities so you don't have to. Things like:
 
 - Creating the scrollbar and related buttons, with correct "native" look and feel.
 - Ensuring the content and scrollbar are properly sized and synchronized together.
@@ -130,6 +169,36 @@ It takes care of a lot of annoying complexities so you don't have to. Things lik
 - Exposing comprehensive type annotations so autocomplete and error checking work.
 - Doing everything it does in a reasonably performant and memory conscious manner.
 
-## Contributors
+### Super Settings Renderers
 
-- Sosnoviy Bor
+By ownlyme  
+[Nexus](https://www.nexusmods.com/morrowind/mods/59673)
+
+Includes these settings renderers:
+
+- Slider
+- Color Picker
+- Custom Keybind
+- Custom Select
+- Optional Checkbox
+- Optional Select
+- Optional Text Line
+- Optional Number Input
+- Optional Color Picker
+
+### Sorre's Settings Renderers
+
+By SorreFalcon  
+[Nexus](https://www.nexusmods.com/morrowind/mods/59808), [GitHub](https://github.com/AngreFalcon/sorre-s-custom-renderers)
+
+Includes these settings renderers:
+
+- Text Set (modified)
+- Multiselect
+- Multinumber
+
+## Credits
+
+**Sosnoviy Bor** - Author  
+**urm** - initial version of Text Set settings renderer ([Attend Me](https://www.nexusmods.com/morrowind/mods/51232))  
+**SorreFalcon** - initial version of Multicheckbox ([Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808))
