@@ -6,24 +6,27 @@ My collection of drop-in modules that can be added to any OpenMW Lua projects fo
 
 **Free to use, modify and redistribute. No permissions required, but a mention of the project is appreciated.**
 
-Core premise of this collection is that you can freely drop these lua files in your project and immediately use them. No weird configuration steps, no bullshit - just `require()` them or register in the correct scope and you're good to go.
+Core premise of this collection is that you can freely drop these lua files in your project and immediately use them. No weird configuration steps, no external dependencies, no bullshit - just `require()` them or register in the correct scope and you're good to go.
 
-I believe that the accessibility these utilities can and will make community mods better for everyone - developers and users alike.
+I believe that the accessibility of these utilities can and will make community mods better for everyone - developers and users alike.
 
 ## Table of Contents
 
-- [General Utils](#general-utils)
+- [Bor's Drop-in Utils (OpenMW)](#bors-drop-in-utils-openmw)
+  - [Table of Contents](#table-of-contents)
+  - [General Utils](#general-utils)
     - [Settings Cache](#settings-cache)
     - [Hard Dependency Checker](#hard-dependency-checker)
     - [Message Picker](#message-picker)
     - [Yaml Folder Parser](#yaml-folder-parser)
-- [Settings Renderers](#settings-renderers)
+  - [Settings Renderers](#settings-renderers)
     - [Text Set](#text-set)
     - [Multicheckbox](#multicheckbox)
-- [Other Neat Things](#other-neat-things)
+  - [Other Neat Things](#other-neat-things)
     - [Virtual List](#virtual-list)
     - [Super Settings Renderers](#super-settings-renderers)
-    - [Sorre's Custom Renderers](#sorres-settings-renderers)
+    - [Sorre's Settings Renderers](#sorres-settings-renderers)
+  - [Credits](#credits)
 
 ## General Utils
 
@@ -36,7 +39,6 @@ Calling settings getters is expensive, but this cost can be minimized by subscri
 Usage example:
 
 ```lua
--- async has to be passed from outer scope, yes
 local async = require("openmw.async")
 local storage = require("openmw.storage")
 
@@ -45,9 +47,10 @@ local settingsCache = require("scripts.MyMod.utils.settingsCache")
 local settings = settingsCache.new(
     storage.playerSection("SettingsMyMod_mySection"),
     async,
-    -- optional onChange handler
     function(key)
-        if key == "someKey" then doSomething(settings.someKey)
+        if key == "someKey" then
+            doSomething(settings.someKey)
+        end
     end
 )
 
@@ -58,35 +61,46 @@ print(settings.someKey)
 
 > Scope: Player
 
-This module lets you check all your registered dependencies at the player script initialization and potentially save you and your mod user a lot of headaches by printing everything in the logs in a human readable way.
+This module checks a list of required dependencies and reports any missing plugin, premature interface call (load order issue), or outdated version during player-script initialization or any other early setup step.
+
+When a dependency fails, it prints each problem to the log and shows a generic popup to the user so they can diagnose the issue by themselves.
 
 Usage example:
 
 ```lua
 local I = require("openmw.interfaces")
 
-local deps = require("scripts.MyMod.utils.dependencies")
+local deps = require("scripts.MyMod.utils.dependencyChecker")
+
 deps.checkAll("My Cool and Awesome Mod", {
     {
         plugin = "FollowerDetectionUtil.omwscripts",
-        interface = I.FollowerDetectionUtil, -- if the dependency has to be initialized before the mod
-        minVersion = 3, -- optional interface version checking
-        currVersion = I.FollowerDetectionUtil
+        interface = I.FollowerDetectionUtil, -- required if the dependency must load before this mod
+        minVersion = 3, -- optional
+        curVersion = I.FollowerDetectionUtil -- optional
             and I.FollowerDetectionUtil.version
             or -1
     },
     {
         plugin = "h3lp_yours3lf.omwscripts",
-        interface = true, -- if load order doesn't matter
+        interface = true, -- valid when load order does not matter
     }
 })
 ```
 
-Demo:
+The appearance (text, size) can be configured in the module itself.
 
-TODO
+<div align="center">
+
 <img src="media/dependencyCheckerMessage.png">
+
+_How it looks in-game_
+
 <img src="media/dependencyCheckerLog.png">
+
+_How it looks in the logs_
+
+</div>
 
 ### Message Picker
 
@@ -106,7 +120,14 @@ msg_helloWorld_4: Hello {who}!
 
 ```lua
 -- Lua
--- TODO
+local core = require("openmw.core")
+local Messages = require("scripts.MyMod.utils.messagePicker")
+
+local l10n = core.l10n("MyMod")
+local messages = Messages(l10n)
+
+messages.show(player, "msg_helloWorld")
+messages.show(player, "msg_helloWorld", { who = "admin" })
 ```
 
 ### Yaml Folder Parser
@@ -127,7 +148,7 @@ Usage example:
 
 > Scope: Menu, Player or Global
 
-You just drop these renderers in your project, add them to your .omwscripts and use them as any other settings renderer.
+You just drop these renderers in your project, add them to your .omwscripts as MENU scripts and use them as any other settings renderer.
 
 ### Text Set
 
@@ -136,7 +157,30 @@ This is a fixed and modified versiong of AttendMeList from [Attend Me](https://w
 Usage example:
 
 ```lua
--- TODO
+{
+    key = "MY_BLACKLIST",
+    name = "Blacklist NPC by ID",
+    description = "Add NPC IDs to the blacklist.",
+    renderer = "textSet",
+    default = {
+        ["caius cosades"] = true,
+        ["guar"] = true,
+        ["vivec"] = true,
+    },
+    argument = {
+        lower = true,   -- OPTIONAL, default: false. Default values don't get lowercased automatically
+    },
+},
+```
+
+This stores a table like:
+
+```lua
+{
+    ["caius cosades"] = true,
+    ["guar"] = true,
+    ["vivec"] = true,
+}
 ```
 
 ### Multicheckbox
@@ -146,8 +190,45 @@ This is a modified version of Multiselect from [Sorre's Custom Renderers](https:
 Usage example:
 
 ```lua
--- TODO
+{
+    key = "MY_TOGGLES",
+    name = "Feature Toggles",
+    description = "Pick which features are active.",
+    renderer = "multiCheckbox",
+    default = {
+        optionA = true,
+        optionB = false,
+        optionC = true,
+    },
+    argument = {
+        l10n = "MyMod",   -- OPTIONAL, assumes argument.keys = l10n keys
+        keys = {          -- REQUIRED, keys not in defaults will be treated as false
+            "optionA",
+            "optionB",
+            "optionC"
+        },
+        colorful = false,   -- OPTIONAL, default: false. Vanilla text colors vs green/red
+    },
+},
 ```
+
+This stores a table like:
+
+```lua
+{
+    optionA = true,
+    optionB = false,
+    optionC = true,
+}
+```
+
+<div align="center">
+
+<img src="media/multicheckBoxDemo.png">
+
+_Vanilla vs colorful option_
+
+</div>
 
 ## Other Neat Things
 
@@ -200,5 +281,5 @@ Includes these settings renderers:
 ## Credits
 
 **Sosnoviy Bor** - Author  
-**urm** - initial version of Text Set settings renderer ([Attend Me](https://www.nexusmods.com/morrowind/mods/51232))  
+**urm** - initial version of Text Set ([Attend Me](https://www.nexusmods.com/morrowind/mods/51232))  
 **SorreFalcon** - initial version of Multicheckbox ([Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808))
