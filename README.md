@@ -144,6 +144,18 @@ Usage example:
 -- TODO
 ```
 
+### Preset Manager
+
+> Scope: Menu, Player, Global
+
+TODO
+
+Usage example:
+
+```lua
+-- TODO
+```
+
 ## Settings Renderers
 
 > Scope: Menu, Player or Global
