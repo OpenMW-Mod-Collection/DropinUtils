@@ -12,6 +12,8 @@ I believe that the accessibility of these utilities can and will make community 
 
 ## Table of Contents
 
+TODO
+
 - [Bor's Drop-in Utils (OpenMW)](#bors-drop-in-utils-openmw)
   - [Table of Contents](#table-of-contents)
   - [General Utils](#general-utils)
@@ -234,11 +236,31 @@ This stores a table like:
 }
 ```
 
+### Two Column Set
+
+TODO
+
+Usage example:
+
+```lua
+--- TODO
+```
+
+This stores a table like:
+
+```lua
+{
+    argonian = true,
+    breton = false,
+    imperial = true,
+}
+```
+
 <div align="center">
 
-<img src="media/multicheckBoxDemo.png">
+<img src="media/twoColumnSetDemo.png">
 
-_Vanilla vs colorful option_
+_Colorful version_
 
 </div>
 
