@@ -120,8 +120,7 @@ I.Settings.registerRenderer('multiNumber_V1', function(input, set, args)
                                 focusLoss = async:callback(function()
                                     local num = lastInput[key]
                                     if num == nil then
-                                        input[key] = 0
-                                        set(input)
+                                        -- no edit happened, keep the existing value
                                         return
                                     end
                                     if args.integer == true then
@@ -133,6 +132,7 @@ I.Settings.registerRenderer('multiNumber_V1', function(input, set, args)
                                         num = args.max[key]
                                     end
                                     input[key] = num
+                                    lastInput[key] = nil
                                     set(input)
                                 end),
                             },

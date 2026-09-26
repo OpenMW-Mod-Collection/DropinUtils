@@ -12,8 +12,6 @@ I believe that the accessibility of these utilities can and will make community 
 
 ## Table of Contents
 
-TODO: fill it out
-
 - [Bor's Drop-in Utils (OpenMW)](#bors-drop-in-utils-openmw)
   - [Table of Contents](#table-of-contents)
   - [General Utils](#general-utils)
@@ -21,9 +19,13 @@ TODO: fill it out
     - [Hard Dependency Checker](#hard-dependency-checker)
     - [Message Picker](#message-picker)
     - [Yaml Folder Parser](#yaml-folder-parser)
+    - [Preset Manager](#preset-manager)
   - [Settings Renderers](#settings-renderers)
     - [Text Set](#text-set)
-    - [Multicheckbox](#multicheckbox)
+    - [MultiCheckbox](#multicheckbox)
+    - [MultiNumber](#multinumber)
+    - [MultiTextLine](#multitextline)
+    - [Two Column Set](#two-column-set)
   - [Other Neat Things](#other-neat-things)
     - [Virtual List](#virtual-list)
     - [Super Settings Renderers](#super-settings-renderers)
@@ -74,7 +76,7 @@ local I = require("openmw.interfaces")
 
 local deps = require("scripts.MyMod.utils.dependencyChecker")
 
-deps.checkAll("My Cool and Awesome Mod", {
+deps.checkAll("MyMod", "My Cool and Awesome Mod", nil, {
     {
         plugin = "FollowerDetectionUtil.omwscripts",
         interface = I.FollowerDetectionUtil,     -- required if the dependency must load before this mod
@@ -90,7 +92,7 @@ deps.checkAll("My Cool and Awesome Mod", {
 })
 ```
 
-The appearance (text, size) can be configured in the module itself.
+`modName` is just used for the log prefix, `header` is the popup title, and `body` is optional - leave it `nil` and it'll fall back to the generic "something went wrong, check your logs" text baked into the module.
 
 <div align="center">
 
@@ -140,37 +142,116 @@ messages.show(player, "msg_helloWorld", { who = "admin" })
 
 Interops are great, but making a separate mod to just add a table to an interface is not elegant and probably inconvenient for non-tech savvy part of the community. But creating one single plain text file makes way more sense. The only thing preventing me from adding it everywhere was not having a good boilerplate template. Until now :D
 
+It scans a whole VFS folder for `.yaml`/`.yml` files and merges whatever list fields you ask for, by name, across every file it finds. No schema, no fixed filenames - anyone can drop in their own yaml and add to the same list.
+
 Usage example:
 
 ```lua
--- TODO
+local yamlFolderParser = require("scripts.MyMod.utils.yamlFolderParser")
+
+local config = yamlFolderParser.new("scripts/MyMod/config/")
+config:load()
+
+local whitelist = config:getSet("whitelisted_models")   -- {[stem]=true, ...}
+local blacklist = config:getSet("blacklisted_models")
+
+if blacklist[someStem] then ... end
 ```
+
+Each yaml file just needs to define whatever list field(s) you're looking for, e.g.:
+
+```yaml
+whitelisted_models:
+  - "meshes/x/goblin01.nif"
+  - "meshes/x/goblin02.nif"
+```
+
+`getSet()` gives you a lookup table (`{[value] = true}`), `getList()` gives you a flat array of the same merged values if you'd rather iterate. There's also `getValue(field, default)` for one-off scalars instead of merged lists - if multiple files define it, whichever file loaded last wins.
 
 ### Preset Manager
 
 > Scope: Menu, Player, Global
 
-> Note: it has to be created in the same script as the preset selector you will attach it to.
+> Note: Preset Manager has to be created in the same (or file) as the preset selector you will attach it to.
+> Note: preset selector (the setting) has to be in a different section from all settings it will change.
 
-If you ever tried making preset selector, you know how annoying it is to set up them. This manager should be the one stop solution for this problem - once and for all, requiring just the keys and values from you with minimum boilerplate.
+If you ever tried making preset selector, you know how annoying they are to set up. This manager should be the one stop solution for this problem - once and for all, requiring just the keys and values from you with minimum boilerplate.
+
+You give it a "selector" setting (the select renderer the player uses to pick a preset), a list of sections that presets are allowed to touch, and a table of `presetName -> sectionKey -> { settingKey = value }`. From there it's all handled for you: changing the selector applies the matching preset automatically, presets can be partial (only listed keys get written).
 
 Usage example:
 
 ```lua
--- TODO
+local I = require("openmw.interfaces")
+local SettingsPresets = require('scripts.MyMod.utils.presetManager')
+
+local presets = SettingsPresets.register {
+    -- The setting that chooses the preset. Its value is a preset name.
+    selector = {
+        section  = 'SettingsMyModPresets',
+        key      = 'preset',
+        isGlobal = false,           -- default: false
+    },
+
+    -- Every section used by presets must be declared here.
+    -- isGlobal defaults to false.
+    sections = {
+        SettingsMyModGraphics = { isGlobal = false },
+        SettingsMyModHud      = { isGlobal = false },
+    },
+
+    -- presetName -> sectionKey -> { settingKey = value }
+    -- Presets may be partial: only listed keys are written.
+    presets = {
+        Low = {
+            SettingsMyModGraphics = { drawDistance = 1, shadows = false },
+            SettingsMyModHud      = { scale = 0.8 },
+        },
+        High = {
+            SettingsMyModGraphics = { drawDistance = 3, shadows = true },
+        },
+    },
+}
+
+presets.apply('Low')        -- apply explicitly
+presets.applyCurrent()      -- apply whatever the selector currently holds
+presets.getCurrent()        -- current selector value (may be nil)
+presets.names()             -- sorted list of preset names
+
+I.Settings.registerGroup({
+    page = "DropinUtils",
+    key = "SettingsDropinUtilsPresets",
+    l10n = "DropinUtils",
+    name = "group_presets_name",
+    permanentStorage = true,
+    order = 0,
+    settings = {
+        {
+            key = "preset", -- matches the key passed to the preset manager
+            name = "preset_name",
+            description = "preset_desc",
+            renderer = "select",
+            default = "Quiet",
+            argument = {
+                l10n = "none",
+                items = presets.names(),
+            },
+        },
+    },
+})
 ```
 
 ## Settings Renderers
 
 > Scope: Menu or Player
 
-> Note: if you want to edit the settings renderer, please rename it. This way, you won't override or get overrided by the other renderers with the same name based on the Load Order.
+> Note: if you want to edit the settings renderer, please rename it. This way, you won't override or get overriden by the other renderers with the same name based on the Load Order.
 
 Just drop these renderers in your project, add them to your .omwscripts as MENU or PLAYER scripts and use them as any other settings renderer.
 
 ### Text Set
 
-This is a fixed and modified versiong of AttendMeList from [Attend Me](https://www.nexusmods.com/morrowind/mods/51232). Basically it's a renderer for making lookup tables. By deafult it is designed for storing different record ids, but it can easily be modified to have custom behaviour for parsing input - from capitalizing text to adding your current cell id to the list if the input field is empty.
+This is a fixed and modified version of AttendMeList from [Attend Me](https://www.nexusmods.com/morrowind/mods/51232). Basically it's a renderer for making lookup tables. By deafult it is designed for storing different record ids, but it can easily be modified to have custom behaviour for parsing input - from capitalizing text to adding your current cell id to the list if the input field is empty.
 
 Usage example:
 
@@ -263,14 +344,45 @@ At its core it's just a single renderer that combines multiple Number fields in 
 Usage example:
 
 ```lua
---- TODO
+{
+    key = "DEMO_NUMBERS",
+    name = "multiNumber_name",
+    description = "multiNumber_desc",
+    renderer = "multiNumber_V1",
+    default = {
+        volume = 0.8,
+        radius = 5,
+    },
+    argument = {
+        l10n = "MyMod",   -- OPTIONAL
+        keys = {          -- REQUIRED, not listed keys will be ignored
+            "volume",
+            "radius",
+        },
+        integer = false,  -- OPTIONAL, default: false
+        min = {           -- OPTIONAL, per-key minimum
+            volume = 0,
+            radius = 1,
+        },
+        max = {           -- OPTIONAL, per-key maximum
+            volume = 1,
+            radius = 20,
+        },
+        width = 100,      -- OPTIONAL, default: 80. Width of each input field
+    },
+},
 ```
 
 This stores a table like:
 
 ```lua
---- TODO
+{
+    volume = 0.8,
+    radius = 5,
+}
 ```
+
+Values get clamped to `min`/`max` (if set) and rounded to an integer (if `integer = true`) on focus loss, so you don't have to sanitize anything on your end.
 
 <div align="center">
 
@@ -285,13 +397,34 @@ The same thing as MultiNumber, but for text.
 Usage example:
 
 ```lua
---- TODO
+{
+    key = "DEMO_TEXTLINES",
+    name = "multiTextLine_name",
+    description = "multiTextLine_desc",
+    renderer = "multiTextLine_V1",
+    default = {
+        greeting = "Hello there",
+        farewell = "Safe travels",
+    },
+    argument = {
+        l10n = "MyMod",   -- OPTIONAL
+        keys = {          -- REQUIRED, not listed keys will be ignored
+            "greeting",
+            "farewell",
+        },
+        lower = false,    -- OPTIONAL, default: false. Lowercases all input values
+        width = 150,      -- OPTIONAL, default: 80. Width of each input field
+    },
+},
 ```
 
 This stores a table like:
 
 ```lua
---- TODO
+{
+    greeting = "Hello there",
+    farewell = "Safe travels",
+}
 ```
 
 <div align="center">
@@ -304,10 +437,31 @@ This stores a table like:
 
 An odd edgecase of a Text Set for cases when you want to synchronize 2 Text Sets without setting crutches all over the place. One column assigns keys `true`, the other - `false`. If the key is not present, its value is left as `nil`.
 
+Left-click an entry to move it to the other column, right-click to remove it entirely. Each column also gets its own "Add" row so new entries can be typed straight into either side.
+
 Usage example:
 
 ```lua
---- TODO
+{
+    key = "DEMO_TWOCOLUMN",
+    name = "twoColumnSet_name",
+    description = "twoColumnSet_desc",
+    renderer = "twoColumnSet_V1",
+    default = {
+        ["caius cosades"] = true,   -- true  -> left column
+        ["gaenor"] = false,         -- false -> right column
+        ["fargoth"] = false,
+    },
+    argument = {
+        width      = 200,        -- REQUIRED, width (in px) of EACH column
+        l10n       = "MyMod",    -- OPTIONAL
+        leftLabel  = "Allowed",  -- OPTIONAL, default: true. Respects l10n
+        rightLabel = "Blocked",  -- OPTIONAL, default: false. Respects l10n
+        lower      = false,      -- OPTIONAL, default: false. Lowercases new user-typed entries
+        colorful   = true,       -- OPTIONAL, default: false. Vanilla text colors vs green/red
+        guide      = true,       -- OPTIONAL, default: false. Shows an LMB/RMB usage hint below the lists
+    },
+},
 ```
 
 This stores a table like:
