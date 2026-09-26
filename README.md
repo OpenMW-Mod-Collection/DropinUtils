@@ -134,6 +134,8 @@ messages.show(player, "msg_helloWorld", { who = "admin" })
 
 ### Yaml Folder Parser
 
+TODO: test it in game
+
 > Scope: Any
 
 > Note: if you want to add it to NPC or Creature, initialize it in Global script and then pass it via addScript() -> onInit chain. This will save you performance in a long run.
@@ -160,9 +162,9 @@ Usage example:
 
 ## Settings Renderers
 
-> Scope: Menu, Player or Global
+> Scope: Menu or Player
 
-You just drop these renderers in your project, add them to your .omwscripts as MENU scripts and use them as any other settings renderer.
+Just drop these renderers in your project, add them to your .omwscripts as MENU or PLAYER scripts and use them as any other settings renderer.
 
 ### Text Set
 
@@ -203,7 +205,7 @@ This stores a table like:
 
 </div>
 
-### Multicheckbox
+### MultiCheckbox
 
 This is a modified version of Multiselect from [Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808) designed to make the renderer more readable, more pleasing to look at and require less boilerplate to set up. An arbitrary amount of checkboxes crammed into one single renderer/setting position.
 
@@ -250,6 +252,50 @@ _Vanilla and colorful versions_
 
 </div>
 
+### MultiNumber
+
+TODO
+
+Usage example:
+
+```lua
+--- TODO
+```
+
+This stores a table like:
+
+```lua
+--- TODO
+```
+
+<div align="center">
+
+<img src="media/multiNumberDemo.png">
+
+</div>
+
+### MultiTextLine
+
+TODO
+
+Usage example:
+
+```lua
+--- TODO
+```
+
+This stores a table like:
+
+```lua
+--- TODO
+```
+
+<div align="center">
+
+<img src="media/multiTextLineDemo.png">
+
+</div>
+
 ### Two Column Set
 
 TODO
@@ -264,9 +310,9 @@ This stores a table like:
 
 ```lua
 {
-    argonian = true,
-    breton = false,
-    imperial = true,
+    argonian = true,  -- left column
+    imperial = true,  -- left column
+    breton = false,   -- right column
 }
 ```
 

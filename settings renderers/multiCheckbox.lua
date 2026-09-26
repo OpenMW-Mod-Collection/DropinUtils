@@ -1,5 +1,6 @@
 ---@diagnostic disable: missing-fields
 ---@omw-context menu
+-- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 local I = require("openmw.interfaces")
 local core = require("openmw.core")
 local async = require("openmw.async")

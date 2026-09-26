@@ -14,7 +14,7 @@ local auxUi = require("openmw_aux.ui")
 -- USAGE:
 --   local deps = require("scripts.MyMod.utils.dependencyChecker")
 --
---   deps.checkAll("MyMod", {
+--   deps.checkAll("MyMod", "Sosnoviy Bor's Mods, nil, {
 --       {
 --           plugin      = "OtherMod.esp",   -- REQUIRED, esp/omwaddon/omwscripts filename of the required plugin
 --           interface   = I.OtherMod,       -- REQUIRED, The interface object retrieved from the other mod OR true if you don't care about the interface
@@ -34,8 +34,7 @@ local deps = {}
 -- ============================================================
 
 local UI_WIDTH = 350
-local HEADER = "Sosnoviy Bor's Mods"
-local BODY = "Whoops! Seems like something went wrong!\n\n" ..
+local DEFAULT_BODY = "Whoops! Seems like something went wrong!\n\n" ..
              "Check your logs by either pressing F10 or checking the openmw.log file.\n\n" ..
              "This is a user error and it shouldn't be reported to the mod author."
 
@@ -348,8 +347,10 @@ end
 -- ============================================================
 
 ---@param modName  string
+---@param header string
+---@param body? string
 ---@param depList  Dependency[]
-deps.checkAll = function(modName, depList)
+deps.checkAll = function(modName, header, body, depList)
     local errors = {}
     for _, dep in ipairs(depList) do
         local ok, msg = checkDependency(dep)
@@ -363,7 +364,7 @@ deps.checkAll = function(modName, depList)
             print(("  - %s"):format(err))
         end
 
-        showCustomInteractiveMessage(HEADER, BODY)
+        showCustomInteractiveMessage(header, body or DEFAULT_BODY)
     end
 end
 

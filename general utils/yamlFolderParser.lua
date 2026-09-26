@@ -1,8 +1,7 @@
 ---@omw-context local|global
+-- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 local vfs = require("openmw.vfs")
 local markup = require("openmw.markup")
-
--- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 
 -- USAGE
 -- -----
@@ -32,12 +31,12 @@ end
 yamlFolderParser.extractFileName = extractFileName
 
 ---@class GeneratorOptions
----@field logTag string|nil        prefix used for print() messages (default "[yamlFolderParser]")
----@field silent boolean|nil       suppress all print() output (default false)
+---@field logTag? string        prefix used for print() messages (default "[yamlFolderParser]")
+---@field silent? boolean       suppress all print() output (default false)
 
 --- Creates a new loader bound to a VFS folder prefix.
 ---@param prefix string     VFS folder prefix to scan, e.g. "scripts/MyMod/config/"
----@param opts GeneratorOptions|nil
+---@param opts? GeneratorOptions
 function yamlFolderParser.new(prefix, opts)
     opts = opts or {}
     local self = setmetatable({}, yamlFolderParser)

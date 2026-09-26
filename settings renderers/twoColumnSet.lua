@@ -35,14 +35,14 @@ local ambient = require("openmw.ambient")
 -- --------------------------------------------------------------------
 
 ---@class TwoColumnSetArgs
----@field width number             REQUIRED. Width in px of each column (height is automatic).
----@field leftLabel string|nil     OPTIONAL. Header text for the left (true) column. Default: 'True'
----@field rightLabel string|nil   OPTIONAL. Header text for the right (false) column. Default: 'False'
----@field l10n string|nil         OPTIONAL. If set, leftLabel/rightLabel are treated as l10n keys.
----@field lower boolean|nil       OPTIONAL. If true, newly typed entries are lowercased. Default: false
----@field colorful boolean|nil    OPTIONAL. If true, use green/red palette instead of vanilla. Default: false
----@field guide boolean|nil       OPTIONAL. If true, shows an LMB/RMB usage hint below the lists. Default: true
----@field guideText string|nil    OPTIONAL. Override the default guide text (or an l10n key if l10n is set)
+---@field width number         REQUIRED. Width in px of each column (height is automatic).
+---@field leftLabel? string    OPTIONAL. Header text for the left (true) column. Default: 'True'
+---@field rightLabel? string   OPTIONAL. Header text for the right (false) column. Default: 'False'
+---@field l10n? string         OPTIONAL. If set, leftLabel/rightLabel are treated as l10n keys.
+---@field lower? boolean       OPTIONAL. If true, newly typed entries are lowercased. Default: false
+---@field colorful? boolean    OPTIONAL. If true, use green/red palette instead of vanilla. Default: false
+---@field guide? boolean       OPTIONAL. If true, shows an LMB/RMB usage hint below the lists. Default: true
+---@field guideText? string    OPTIONAL. Override the default guide text (or an l10n key if l10n is set)
 
 
 local colorFromGMST = function(gmst)

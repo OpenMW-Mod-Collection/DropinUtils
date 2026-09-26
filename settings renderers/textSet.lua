@@ -31,9 +31,9 @@ local async = require("openmw.async")
 
 
 ---@class TextSetArgs
----@field lower boolean|nil    If true, all input text will be lowered.
----                            It does not lower your default values due to how Lua API works.
----                            Default: false
+---@field lower? boolean    OPTIONAL, Default: false
+---                         If true, all input text will be lowered.
+---                         It does not lower your default values due to how Lua API works.
 
 I.Settings.registerRenderer('textSet', function(input, set, arg)
     ---@type TextSetArgs
@@ -140,7 +140,10 @@ I.Settings.registerRenderer('textSet', function(input, set, arg)
                         template = I.MWUI.templates.padding,
                         content = ui.content { {
                             template = I.MWUI.templates.textNormal,
-                            props = { text = "x" },
+                            props = {
+                                text = "x",
+                                textAlignV = ui.ALIGNMENT.Center,
+                            },
                             events = {
                                 mouseClick = async:callback(function()
                                     remove(text)

@@ -1,5 +1,4 @@
 ---@omw-context local|global
-
 -- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 
 -- USAGE:

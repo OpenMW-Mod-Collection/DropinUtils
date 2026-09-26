@@ -1,5 +1,6 @@
 ---@diagnostic disable: undefined-global
 ---@omw-context menu|player|global
+-- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 --[[
 SettingsPresets.lua
 ===================

@@ -1,5 +1,4 @@
 ---@omw-context local | global
-
 -- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 
 -- USAGE:
@@ -23,7 +22,7 @@ local M = {}
 --- Create a new settings cache for a StorageSection.
 ---@param section  openmw.storage.StorageSection  The storage section to mirror
 ---@param async    table           The openmw.async instance from the calling script
----@param onChange function|nil    Optional callback(key) fired after the cache updates.
+---@param onChange? function       Optional callback(key) fired after the cache updates.
 --- key is nil when the whole section was reset.
 ---@return table table  A plain table whose keys mirror the section's current values
 function M.new(section, async, onChange)
