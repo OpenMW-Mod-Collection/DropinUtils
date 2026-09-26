@@ -8,31 +8,35 @@ local ui = require("openmw.ui")
 local util = require("openmw.util")
 local ambient = require("openmw.ambient")
 
--- --------------------------------------------------------------------
--- {
---    key = 'MY_TWO_COLUMN_SET',
---    name = 'Allowed / Blocked NPCs',
---    description = 'Left-click an entry to move it to the other column, right-click to remove it.',
---    renderer = 'twoColumnSet',
---    default = {
---       ["caius cosades"] = true,   -- true  -> left column
---       ["guar"]          = false, -- false -> right column
---    },
---    argument = {
---       width      = 200,          -- REQUIRED, width (in px) of EACH column
---       leftLabel  = 'Allowed',    -- OPTIONAL, default: 'True'
---       rightLabel = 'Blocked',    -- OPTIONAL, default: 'False'
---       l10n       = 'MyMod',      -- OPTIONAL, if set leftLabel/rightLabel are treated as l10n keys
---       lower      = false,        -- OPTIONAL, default: false. Lowercases new user-typed entries
---       colorful   = false,        -- OPTIONAL, default: false. Vanilla text colors vs green/red
---       guide      = true,         -- OPTIONAL, default: false. Shows an LMB/RMB usage hint below the lists
---       guideText  = nil,          -- OPTIONAL, override the default guide text (or an l10n key if l10n is set)
---    },
--- },
-
--- Resulting stored value is a table like { ["caius cosades"] = true, ["guar"] = false }.
--- Keys with a value of `true` are rendered in the left column, `false` in the right column.
--- --------------------------------------------------------------------
+-- ============================================================================
+-- twoColumnSet renderer — two sortable columns of string entries (e.g. allow/block lists)
+-- ============================================================================
+-- USAGE (settings config entry):
+--   {
+--      key = 'MY_TWO_COLUMN_SET',
+--      name = 'Allowed / Blocked NPCs',
+--      description = 'Left-click an entry to move it to the other column, right-click to remove it.',
+--      renderer = 'twoColumnSet',
+--      default = {
+--         ["caius cosades"] = true,   -- true  -> left column
+--         ["guar"]          = false, -- false -> right column
+--      },
+--      argument = {
+--         width      = 200,          -- REQUIRED, width (in px) of EACH column
+--         leftLabel  = 'Allowed',    -- OPTIONAL, default: 'True'
+--         rightLabel = 'Blocked',    -- OPTIONAL, default: 'False'
+--         l10n       = 'MyMod',      -- OPTIONAL, if set leftLabel/rightLabel are treated as l10n keys
+--         lower      = false,        -- OPTIONAL, default: false. Lowercases new user-typed entries
+--         colorful   = false,        -- OPTIONAL, default: false. Vanilla text colors vs green/red
+--         guide      = true,         -- OPTIONAL, default: false. Shows an LMB/RMB usage hint below the lists
+--         guideText  = nil,          -- OPTIONAL, override the default guide text (or an l10n key if l10n is set)
+--      },
+--   },
+--
+-- RESULTING STORED VALUE:
+--   { ["caius cosades"] = true, ["guar"] = false }
+--   Keys with a value of `true` are rendered in the left column, `false` in the right column.
+-- ============================================================================
 
 ---@class TwoColumnSetArgs
 ---@field width number         REQUIRED. Width in px of each column (height is automatic).
@@ -91,7 +95,7 @@ local function updateTextColor(state, textWidget)
     textWidget:update()
 end
 
-I.Settings.registerRenderer('twoColumnSet', function(input, set, args)
+I.Settings.registerRenderer('twoColumnSet_V1', function(input, set, args)
     ---@type TwoColumnSetArgs
     args = args or {}
     if type(args.width) ~= "number" then
@@ -200,8 +204,8 @@ I.Settings.registerRenderer('twoColumnSet', function(input, set, args)
     end
 
     local ADD_BUTTON_WIDTH = 30
-    local BOX_INNER_PADDING = 7
-    local ADD_ROW_GAP = 2
+    local BOX_INNER_PADDING = 6
+    local ADD_ROW_GAP = 5
 
     -- ----------------------------------------------------------------
     -- "Add" input row at the bottom of a column (taken from textSet)
@@ -245,21 +249,14 @@ I.Settings.registerRenderer('twoColumnSet', function(input, set, args)
                 } }),
             } }),
         })
-        header.content:add({
-            type = ui.TYPE.Widget,
-            props = {
-                size = util.vector2(ADD_ROW_GAP, 0),
-            },
-        })
+        header.content:add(interval)
+        header.content:add(interval)
 
         local textFieldBoxWidth = width - ADD_BUTTON_WIDTH - ADD_ROW_GAP
         local textFieldWidth = textFieldBoxWidth - BOX_INNER_PADDING
 
         header.content:add({
             template = I.MWUI.templates.box,
-            props = {
-                size = util.vector2(textFieldBoxWidth, 0),
-            },
             content = ui.content({ {
                 template = I.MWUI.templates.padding,
                 content = ui.content({ {
@@ -304,6 +301,7 @@ I.Settings.registerRenderer('twoColumnSet', function(input, set, args)
         column.content:add(interval)
 
         column.content:add(makeAddRow(isLeft))
+        column.content:add(interval)
         column.content:add(interval)
 
         local list = {
@@ -373,7 +371,7 @@ I.Settings.registerRenderer('twoColumnSet', function(input, set, args)
             props = {
                 size = util.vector2(width * 2 + 3, 0),
                 text = 'Left click: move between columns.\nRight click: remove.',
-                textAlignH = ui.ALIGNMENT.Start,
+                textAlignH = ui.ALIGNMENT.Center,
                 textColor = MORROWIND_TEXT_STATES.disabled.color,
                 alpha = MORROWIND_TEXT_STATES.disabled.alpha,
             }

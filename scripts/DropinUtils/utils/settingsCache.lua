@@ -1,6 +1,9 @@
 ---@omw-context local | global
 -- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 
+-- ============================================================================
+-- settingsCache — mirror a StorageSection into a plain table (no lookup cost)
+-- ============================================================================
 -- USAGE:
 --   local async   = require("openmw.async")
 --   local storage = require("openmw.storage")
@@ -16,6 +19,7 @@
 --   local settings = settingsCache.new(section, async, function(key)
 --       doSomething(settings.someKey)
 --   end)
+-- ============================================================================
 
 local M = {}
 

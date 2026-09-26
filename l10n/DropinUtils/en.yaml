@@ -1,0 +1,31 @@
+page_name: Drop-in Utils Demo
+page_desc: Live showcase of every renderer and utility in Bor's Drop-in Utils.
+
+group_presets_name: Presets
+preset_name: Preset
+preset_desc: Applies a bundle of the Tuning Values above. See presetManager.lua.
+
+group_renderers_name: Renderers
+toggles_name: Feature Toggles
+toggles_desc: "multiCheckbox renderer: independent booleans in one table."
+soundOn: Sound
+questMarkers: Quest Markers
+particlesOn: Particles
+multiTextLine_name: Greeting Text
+multiTextLine_desc: "multiTextLine renderer: a few labeled single-line text fields."
+greeting: Greeting
+farewell: Farewell
+multiNumber_name: Tuning Values
+multiNumber_desc: "multiNumber renderer: labeled numeric fields with min/max clamping."
+volume: Volume
+radius: Radius
+textSet_name: Extra Blacklist IDs
+textSet_desc: "textSet renderer: a free-form add/remove set of strings."
+twoColumnSet_name: Allowed / Blocked NPCs
+twoColumnSet_desc: "twoColumnSet renderer: left-click to move, right-click to remove."
+
+# Used by messagePicker.lua (utils/messagePicker.lua). Numbered variants;
+# the first missing index stops the search, so at least "_1" is required.
+DemoGreeting_1: Hello, outlander.
+DemoGreeting_2: Well met, traveler.
+DemoGreeting_3: You there - nice weather for it, isn't it?

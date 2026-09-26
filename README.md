@@ -12,7 +12,7 @@ I believe that the accessibility of these utilities can and will make community 
 
 ## Table of Contents
 
-TODO
+TODO: fill it out
 
 - [Bor's Drop-in Utils (OpenMW)](#bors-drop-in-utils-openmw)
   - [Table of Contents](#table-of-contents)
@@ -94,11 +94,11 @@ The appearance (text, size) can be configured in the module itself.
 
 <div align="center">
 
-<img src="media/dependencyCheckerMessage.png">
+<img src="media/depCheck_message.png">
 
 _How it looks in-game_
 
-<img src="media/dependencyCheckerLog.png">
+<img src="media/depCheck_log.png">
 
 _How it looks in the logs_
 
@@ -134,8 +134,6 @@ messages.show(player, "msg_helloWorld", { who = "admin" })
 
 ### Yaml Folder Parser
 
-TODO: test it in game
-
 > Scope: Any
 
 > Note: if you want to add it to NPC or Creature, initialize it in Global script and then pass it via addScript() -> onInit chain. This will save you performance in a long run.
@@ -152,7 +150,9 @@ Usage example:
 
 > Scope: Menu, Player, Global
 
-TODO
+> Note: it has to be created in the same script as the preset selector you will attach it to.
+
+If you ever tried making preset selector, you know how annoying it is to set up them. This manager should be the one stop solution for this problem - once and for all, requiring just the keys and values from you with minimum boilerplate.
 
 Usage example:
 
@@ -163,6 +163,8 @@ Usage example:
 ## Settings Renderers
 
 > Scope: Menu or Player
+
+> Note: if you want to edit the settings renderer, please rename it. This way, you won't override or get overrided by the other renderers with the same name based on the Load Order.
 
 Just drop these renderers in your project, add them to your .omwscripts as MENU or PLAYER scripts and use them as any other settings renderer.
 
@@ -177,7 +179,7 @@ Usage example:
     key = "MY_BLACKLIST",
     name = "Blacklist NPC by ID",
     description = "Add NPC IDs to the blacklist.",
-    renderer = "textSet",
+    renderer = "textSet_V1",
     default = {
         ["caius cosades"] = true,
         ["guar"] = true,
@@ -201,7 +203,7 @@ This stores a table like:
 
 <div align="center">
 
-<img src="media/textSetDemo.png">
+<img src="media/renderers_textSet.png">
 
 </div>
 
@@ -216,7 +218,7 @@ Usage example:
     key = "MY_TOGGLES",
     name = "Feature Toggles",
     description = "Pick which features are active.",
-    renderer = "multiCheckbox",
+    renderer = "multiCheckbox_V1",
     default = {
         optionA = true,
         optionB = false,
@@ -246,7 +248,7 @@ This stores a table like:
 
 <div align="center">
 
-<img src="media/multicheckboxDemo.png">
+<img src="media/renderers_multiCheckbox.png">
 
 _Vanilla and colorful versions_
 
@@ -254,7 +256,9 @@ _Vanilla and colorful versions_
 
 ### MultiNumber
 
-TODO
+This is a modified version of Multinumber from [Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808) with only real difference in how you localize the labels - instead of passing localized strings, you just pass l10n key. Just like you do with OpenMW's renderers.
+
+At its core it's just a single renderer that combines multiple Number fields in one place. Handy for grouping similar values together.
 
 Usage example:
 
@@ -270,13 +274,13 @@ This stores a table like:
 
 <div align="center">
 
-<img src="media/multiNumberDemo.png">
+<img src="media/renderers_multiNumber.png">
 
 </div>
 
 ### MultiTextLine
 
-TODO
+The same thing as MultiNumber, but for text.
 
 Usage example:
 
@@ -292,13 +296,13 @@ This stores a table like:
 
 <div align="center">
 
-<img src="media/multiTextLineDemo.png">
+<img src="media/renderers_multiTextLine.png">
 
 </div>
 
 ### Two Column Set
 
-TODO
+An odd edgecase of a Text Set for cases when you want to synchronize 2 Text Sets without setting crutches all over the place. One column assigns keys `true`, the other - `false`. If the key is not present, its value is left as `nil`.
 
 Usage example:
 
@@ -318,7 +322,7 @@ This stores a table like:
 
 <div align="center">
 
-<img src="media/twoColumnSetDemo.png">
+<img src="media/renderers_twoColumnSet.png">
 
 _Colorful version_
 
@@ -361,19 +365,8 @@ Includes these settings renderers:
 - Optional Number Input
 - Optional Color Picker
 
-### Sorre's Settings Renderers
-
-By SorreFalcon  
-[Nexus](https://www.nexusmods.com/morrowind/mods/59808), [GitHub](https://github.com/AngreFalcon/sorre-s-custom-renderers)
-
-Includes these settings renderers:
-
-- Text Set (modified)
-- Multiselect
-- Multinumber
-
 ## Credits
 
 **Sosnoviy Bor** - Author  
 **urm** - initial version of Text Set ([Attend Me](https://www.nexusmods.com/morrowind/mods/51232))  
-**SorreFalcon** - initial versions of some settings renderes ([Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808))
+**SorreFalcon** - initial versions of MultiNumber and MultiCheckbox ([Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808))

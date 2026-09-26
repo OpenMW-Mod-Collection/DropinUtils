@@ -6,60 +6,50 @@ local ui = require("openmw.ui")
 local async = require("openmw.async")
 local util = require("openmw.util")
 
--- --------------------------------------------------------------------
--- {
---     key = 'MY_MULTINUMBER',
---     renderer = 'multiNumber',
---     name = 'multiNumber_name',
---     description = 'multiNumber_desc',
---     default = {
---         num1 = 0.01,
---         num2 = 1,
---     },
---     argument = {
---         l10n = "MyModL10nContext",  -- OPTIONAL
---         keys = {                    -- REQUIRED, not listed keys will be ignored
---             "num1",
---             "num2",
---         },
---         integer = false,             -- OPTIONAL, default: false
---         min = {                     -- OPTIONAL
---             num1 = -10,
---             num2 = -10,
---         },
---         max = {                     -- OPTIONAL
---             num1 = 10,
---             num2 = 10,
---         },
---         width = 150,                -- OPTIONAL, default: 80. Width of the input field
---     },
--- },
--- --------------------------------------------------------------------
--- Resulting stored value is a table like
--- {
---     num1 = 0.01,
---     num2 = 1,
--- }
--- --------------------------------------------------------------------
+-- ============================================================================
+-- multiTextLine renderer — a stack of labeled single-line text inputs
+-- ============================================================================
+-- USAGE (settings config entry):
+--   {
+--       key = 'MY_MULTITEXTLINE',
+--       renderer = 'multiTextLine',
+--       name = 'multiTextLine_name',
+--       description = 'multiTextLine_desc',
+--       default = {
+--           line1 = "hello",
+--           line2 = "world",
+--       },
+--       argument = {
+--           l10n = "MyModL10nContext",  -- OPTIONAL
+--           keys = {                    -- REQUIRED, not listed keys will be ignored
+--               "line1",
+--               "line2",
+--           },
+--           lower = false,              -- OPTIONAL, default: false. Lowercases all input values
+--           width = 150,                -- OPTIONAL, default: 80. Width of the input field
+--       },
+--   },
+--
+-- RESULTING STORED VALUE:
+--   { line1 = "hello", line2 = "world" }
+-- ============================================================================
 
----@class MultiNumberArgs
+---@class MultiTextLineArgs
 ---@field keys string[] Field keys to render, in order; also used as l10n keys for labels
----@field integer? boolean If true, round values to nearest integer
----@field min? table<string, number> Per-key minimum value
----@field max? table<string, number> Per-key maximum value
+---@field lower? boolean If true, lowercase all input values (default false)
 ---@field width? number Width of each text input box, defaults to 80
 ---@field l10n? string l10n context key; each field key is looked up directly as its label
 
----@param input table<string, number> Current values keyed by field name
----@param set fun(input: table<string, number>) Callback to persist updated values
----@param args MultiNumberArgs
-I.Settings.registerRenderer('multiNumber', function(input, set, args)
+---@param input table<string, string> Current values keyed by field name
+---@param set fun(input: table<string, string>) Callback to persist updated values
+---@param args MultiTextLineArgs
+I.Settings.registerRenderer('multiTextLine_V1', function(input, set, args)
     local lastInput = {}
     if args == nil then args = { keys = {} } end
     if args.keys ~= nil then
         for _, k in ipairs(args.keys) do
             if input[k] == nil then
-                input[k] = 0
+                input[k] = ""
             end
         end
     end
@@ -85,6 +75,7 @@ I.Settings.registerRenderer('multiNumber', function(input, set, args)
     for _, key in ipairs(args.keys) do
         local label = translate(key)
         body.content:add(interval)
+        body.content:add(interval)
         body.content:add({
             type = ui.TYPE.Flex,
             props = {
@@ -100,10 +91,12 @@ I.Settings.registerRenderer('multiNumber', function(input, set, args)
                     },
                 },
                 interval,
+                interval,
+                interval,
                 {
                     template = I.MWUI.templates.box,
                     content = ui.content({ {
-                        template = I.MWUI.templates.textNormal,
+                        template = I.MWUI.templates.padding,
                         content = ui.content({ {
                             template = I.MWUI.templates.textEditLine,
                             props = {
@@ -112,24 +105,17 @@ I.Settings.registerRenderer('multiNumber', function(input, set, args)
                             },
                             events = {
                                 textChanged = async:callback(function(text)
-                                    lastInput[key] = tonumber(text)
+                                    lastInput[key] = text
                                 end),
                                 focusLoss = async:callback(function()
-                                    local num = lastInput[key]
-                                    if num == nil then
-                                        input[key] = 0
-                                        set(input)
-                                        return
+                                    local text = lastInput[key]
+                                    if text == nil then
+                                        text = input[key]
                                     end
-                                    if args.integer == true then
-                                        num = math.floor(num + 0.5)
+                                    if args.lower == true then
+                                        text = string.lower(text)
                                     end
-                                    if args.min[key] ~= nil and num < args.min[key] then
-                                        num = args.min[key]
-                                    elseif args.max[key] ~= nil and num > args.max[key] then
-                                        num = args.max[key]
-                                    end
-                                    input[key] = num
+                                    input[key] = text
                                     set(input)
                                 end),
                             },

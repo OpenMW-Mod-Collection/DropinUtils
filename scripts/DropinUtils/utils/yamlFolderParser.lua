@@ -3,8 +3,10 @@
 local vfs = require("openmw.vfs")
 local markup = require("openmw.markup")
 
--- USAGE
--- -----
+-- ============================================================================
+-- yamlFolderParser — merge list fields from every YAML file in a VFS folder
+-- ============================================================================
+-- USAGE:
 --   local yamlFolderParser = require("scripts.MyMod.utils.yamlFolderParser")
 --
 --   local config = yamlFolderParser.new("scripts/MyMod/config/")
@@ -18,6 +20,7 @@ local markup = require("openmw.markup")
 -- Any YAML file under the given prefix can define any fields you like;
 -- this module doesn't enforce a schema, it just merges whatever list
 -- fields you ask for by name across every file it finds.
+-- ============================================================================
 
 local yamlFolderParser = {}
 yamlFolderParser.__index = yamlFolderParser

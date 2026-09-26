@@ -8,30 +8,34 @@ local ui = require("openmw.ui")
 local util = require("openmw.util")
 local ambient = require("openmw.ambient")
 
--- --------------------------------------------------------------------
--- {
---    key = 'MY_TOGGLES',
---    name = 'Feature Toggles',
---    description = 'Pick which features are active.',
---    renderer = 'multiCheckbox',
---    default = {
---       optionA = true,
---       optionB = false,
---       optionC = true,
---    },
---    argument = {
---       l10n = 'MyMod',   -- OPTIONAL, assumes argument.keys = l10n keys
---       keys = {          -- REQUIRED, keys not in defaults will be treated as false
---          'optionA',
---          'optionB',
---          'optionC',
---       },
---       colorful = false, -- OPTIONAL, true for green/red scheme instead of Morrowind-style
---    },
--- },
-
--- Resulting stored value is a table like { optionA = true, optionB = false }.
--- --------------------------------------------------------------------
+-- ============================================================================
+-- multiCheckbox renderer — a row of labeled checkboxes stored as one table
+-- ============================================================================
+-- USAGE (settings config entry):
+--   {
+--      key = 'MY_TOGGLES',
+--      name = 'Feature Toggles',
+--      description = 'Pick which features are active.',
+--      renderer = 'multiCheckbox',
+--      default = {
+--         optionA = true,
+--         optionB = false,
+--         optionC = true,
+--      },
+--      argument = {
+--         l10n = 'MyMod',   -- OPTIONAL, assumes argument.keys = l10n keys
+--         keys = {          -- REQUIRED, keys not in defaults will be treated as false
+--            'optionA',
+--            'optionB',
+--            'optionC',
+--         },
+--         colorful = false, -- OPTIONAL, default: false. Vanilla text colors vs green/red
+--      },
+--   },
+--
+-- RESULTING STORED VALUE:
+--   { optionA = true, optionB = false, optionC = true }
+-- ============================================================================
 
 local CHECK_TEXTURE_ON = ui.texture({ path = "textures/menu_scroll_scroller_middle.dds" })
 local CHECK_TEXTURE_OFF = ui.texture({ path = "textures/menu_scroll_scroller_middle.dds" })
@@ -140,7 +144,7 @@ local function interactedState(states, isChecked)
    if isChecked then return states.enabledInteracted else return states.disabledInteracted end
 end
 
-I.Settings.registerRenderer('multiCheckbox', function(input, set, args)
+I.Settings.registerRenderer('multiCheckbox_V1', function(input, set, args)
    local buttonHeld = false
 
    if type(input) ~= "table" then input = {} end

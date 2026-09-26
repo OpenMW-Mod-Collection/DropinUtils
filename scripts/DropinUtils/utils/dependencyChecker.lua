@@ -10,14 +10,16 @@ local async = require("openmw.async")
 local ambient = require("openmw.ambient")
 local auxUi = require("openmw_aux.ui")
 
--- ============================================================
+-- ============================================================================
+-- dependencyChecker — verify required plugins/interfaces are present, popup on failure
+-- ============================================================================
 -- USAGE:
 --   local deps = require("scripts.MyMod.utils.dependencyChecker")
 --
---   deps.checkAll("MyMod", "Sosnoviy Bor's Mods, nil, {
+--   deps.checkAll("MyMod", "Sosnoviy Bor's Mods", nil, {
 --       {
 --           plugin      = "OtherMod.esp",   -- REQUIRED, esp/omwaddon/omwscripts filename of the required plugin
---           interface   = I.OtherMod,       -- REQUIRED, The interface object retrieved from the other mod OR true if you don't care about the interface
+--           interface   = I.OtherMod,       -- REQUIRED, the interface object retrieved from the other mod, OR true if you don't care about the interface
 --           minVersion  = 1.2,              -- OPTIONAL
 --           curVersion  = I.OtherMod and I.OtherMod.version or -1, -- OPTIONAL
 --       },
@@ -25,7 +27,7 @@ local auxUi = require("openmw_aux.ui")
 --
 --   -- If any dependency check fails, prints the reasons to the log and
 --   -- shows a generic "something went wrong" popup to the player.
--- ============================================================
+-- ============================================================================
 
 local deps = {}
 
