@@ -1,4 +1,4 @@
----@omw-context any
+---@omw-context local|global
 
 -- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 
@@ -48,7 +48,7 @@ local function Messages(l10n)
         return messageOptions[math.random(#messageOptions)]
     end
 
-    ---@param player GameObject
+    ---@param player openmw.GObject
     ---@param messageKey string
     ---@param context? table
     local function show(player, messageKey, context)

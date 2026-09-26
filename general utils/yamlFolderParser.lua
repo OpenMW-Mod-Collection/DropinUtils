@@ -1,3 +1,4 @@
+---@omw-context local|global
 local vfs = require("openmw.vfs")
 local markup = require("openmw.markup")
 

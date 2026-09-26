@@ -77,9 +77,9 @@ local deps = require("scripts.MyMod.utils.dependencyChecker")
 deps.checkAll("My Cool and Awesome Mod", {
     {
         plugin = "FollowerDetectionUtil.omwscripts",
-        interface = I.FollowerDetectionUtil, -- required if the dependency must load before this mod
-        minVersion = 3, -- optional
-        curVersion = I.FollowerDetectionUtil -- optional
+        interface = I.FollowerDetectionUtil,     -- required if the dependency must load before this mod
+        minVersion = 3,                          -- optional
+        curVersion = I.FollowerDetectionUtil     -- optional
             and I.FollowerDetectionUtil.version
             or -1
     },
@@ -197,6 +197,12 @@ This stores a table like:
 }
 ```
 
+<div align="center">
+
+<img src="media/textSetDemo.png">
+
+</div>
+
 ### Multicheckbox
 
 This is a modified version of Multiselect from [Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808) designed to make the renderer more readable, more pleasing to look at and require less boilerplate to set up. An arbitrary amount of checkboxes crammed into one single renderer/setting position.
@@ -235,6 +241,14 @@ This stores a table like:
     optionC = true,
 }
 ```
+
+<div align="center">
+
+<img src="media/multicheckboxDemo.png">
+
+_Vanilla and colorful versions_
+
+</div>
 
 ### Two Column Set
 
@@ -316,4 +330,4 @@ Includes these settings renderers:
 
 **Sosnoviy Bor** - Author  
 **urm** - initial version of Text Set ([Attend Me](https://www.nexusmods.com/morrowind/mods/51232))  
-**SorreFalcon** - initial version of Multicheckbox ([Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808))
+**SorreFalcon** - initial versions of some settings renderes ([Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808))
