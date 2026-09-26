@@ -29,7 +29,6 @@ I believe that the accessibility of these utilities can and will make community 
   - [Other Neat Things](#other-neat-things)
     - [Virtual List](#virtual-list)
     - [Super Settings Renderers](#super-settings-renderers)
-    - [Sorre's Settings Renderers](#sorres-settings-renderers)
   - [Credits](#credits)
 
 ## General Utils
@@ -382,8 +381,6 @@ This stores a table like:
 }
 ```
 
-Values get clamped to `min`/`max` (if set) and rounded to an integer (if `integer = true`) on focus loss, so you don't have to sanitize anything on your end.
-
 <div align="center">
 
 <img src="media/renderers_multiNumber.png">
@@ -488,8 +485,8 @@ These are not made by me, but they share the idea of this project.
 
 ### Virtual List
 
-By Greatness7.  
-[GitHub](https://github.com/Greatness7/openmw_virtual_list/tree/main)
+**By Greatness7.  
+[GitHub](https://github.com/Greatness7/openmw_virtual_list/tree/main)**
 
 This library provides a performant virtual-list widget for use in OpenMW-lua mods.
 
@@ -504,8 +501,8 @@ It takes care of a lot of annoying complexities so you don't have to. Things lik
 
 ### Super Settings Renderers
 
-By ownlyme  
-[Nexus](https://www.nexusmods.com/morrowind/mods/59673)
+**By ownlyme  
+[Nexus](https://www.nexusmods.com/morrowind/mods/59673)**
 
 Includes these settings renderers:
 
