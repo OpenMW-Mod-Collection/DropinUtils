@@ -444,7 +444,7 @@ Usage example:
     key = "DEMO_TWOCOLUMN",
     name = "twoColumnSet_name",
     description = "twoColumnSet_desc",
-    renderer = "twoColumnSet_V1",
+    renderer = "twoColumnSet_V2",
     default = {
         ["caius cosades"] = true,   -- true  -> left column
         ["gaenor"] = false,         -- false -> right column
