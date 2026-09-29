@@ -2,8 +2,6 @@
 ---@omw-context menu|player|global
 -- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 -- ============================================================================
--- SettingsPresets — apply groups of settings at once, selected by a dropdown
--- ============================================================================
 -- Standalone, single-file OpenMW module for settings presets.
 --
 -- Copy it anywhere in your mod (e.g. scripts/MyMod/SettingsPresets.lua) and

@@ -12,16 +12,16 @@ local presets = SettingsPresets.register({
         isGlobal = false,
     },
     sections = {
-        SettingsDropinUtilsDemoRenderers = { isGlobal = false },
+        SettingsDropinUtilsRenderers = { isGlobal = false },
     },
     presets = {
         Quiet = {
-            SettingsDropinUtilsDemoRenderers = {
+            SettingsDropinUtilsRenderers = {
                 DEMO_NUMBERS = { volume = 0.2, radius = 3 },
             },
         },
         Loud = {
-            SettingsDropinUtilsDemoRenderers = {
+            SettingsDropinUtilsRenderers = {
                 DEMO_NUMBERS = { volume = 1.0, radius = 15 },
             },
         },
@@ -59,7 +59,7 @@ I.Settings.registerGroup({
 
 I.Settings.registerGroup({
     page = "DropinUtils",
-    key = "SettingsDropinUtilsDemoRenderers",
+    key = "SettingsDropinUtilsRenderers",
     l10n = "DropinUtils",
     name = "group_renderers_name",
     permanentStorage = true,
@@ -146,7 +146,7 @@ I.Settings.registerGroup({
             key = "DEMO_TWOCOLUMN",
             name = "twoColumnSet_name",
             description = "twoColumnSet_desc",
-            renderer = "twoColumnSet_V1",
+            renderer = "twoColumnSet_V2",
             default = {
                 ["caius cosades"] = true,
                 ["gaenor"] = false,
@@ -158,6 +158,19 @@ I.Settings.registerGroup({
                 rightLabel = "Blocked",
                 guide = true,
                 colorful = true,
+            },
+        },
+        {
+            key = 'MY_ORDER_LIST',
+            name = 'Priority order',
+            description = 'Click an entry to select it, then use the buttons above the list.',
+            renderer = 'orderList_V1',
+            default = {
+                "Fire",
+                "Frost",
+                "- Weak -",
+                "Shock",
+                "Poison",
             },
         },
     },

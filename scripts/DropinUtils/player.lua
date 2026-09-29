@@ -13,10 +13,13 @@ local Messages = require("scripts.DropinUtils.utils.messagePicker")
 -- settingsCache: mirror the renderers section into a plain table and log
 -- whenever anything in it changes.
 -- ----------------------------------------------------------------------
-local rendererSection = storage.playerSection("SettingsDropinUtilsRenderers")
-local settings = SettingsCache.new(rendererSection, async, function(key)
-    print(("SettingsCache noticed a change to '%s'"):format(tostring(key)))
-end)
+local settings = SettingsCache.new(
+    storage.playerSection("SettingsDropinUtilsRenderers"),
+    async,
+    function(key)
+        print(("SettingsCache noticed a change to '%s'"):format(tostring(key)))
+    end
+)
 
 -- ----------------------------------------------------------------------
 -- dependencyChecker: demo call. Passing `true` as the interface means "just

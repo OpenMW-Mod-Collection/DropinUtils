@@ -26,6 +26,7 @@ I believe that the accessibility of these utilities can and will make community 
     - [MultiNumber](#multinumber)
     - [MultiTextLine](#multitextline)
     - [Two Column Set](#two-column-set)
+    - [Order List](#order-list)
   - [Other Neat Things](#other-neat-things)
     - [Virtual List](#virtual-list)
     - [Super Settings Renderers](#super-settings-renderers)
@@ -165,7 +166,7 @@ whitelisted_models:
   - "meshes/x/goblin02.nif"
 ```
 
-`getSet()` gives you a lookup table (`{[value] = true}`), `getList()` gives you a flat array of the same merged values if you'd rather iterate. There's also `getValue(field, default)` for one-off scalars instead of merged lists - if multiple files define it, whichever file loaded last wins.
+`getSet()` gives you a lookup table (`{[value] = true}`), `getList()` gives you a flat array of the same merged values if you'd rather iterate. There's also `getValue(field, default)` for one-off scalars instead of merged lists - if multiple files define it, whichever file loaded last (in alphabetical order) wins.
 
 ### Preset Manager
 
@@ -476,6 +477,49 @@ This stores a table like:
 <img src="media/renderers_twoColumnSet.png">
 
 _Colorful version_
+
+</div>
+
+### Order List
+
+For cases when you want to let the player move some things around. Supports unmovable separators.
+
+Usage example:
+
+```lua
+{
+    key = 'MY_ORDER_LIST',
+    name = 'Priority order',
+    description = 'Click an entry to select it, then use the buttons above the list.',
+    renderer = 'orderList_V1',
+    default = {
+        "Fire",
+        "Frost",
+        "- Weak -",   -- separator, locked
+        "Shock",
+        "Poison",
+    },
+    argument = {
+        width = 220,  -- OPTIONAL, width (in px) of the list. Default: 220
+    },
+},
+```
+
+This stores a table like:
+
+```lua
+{
+    "Fire",
+    "Frost",
+    "- Weak -",
+    "Shock",
+    "Poison",
+}
+```
+
+<div align="center">
+
+<img src="media/renderers_orderList.png">
 
 </div>
 

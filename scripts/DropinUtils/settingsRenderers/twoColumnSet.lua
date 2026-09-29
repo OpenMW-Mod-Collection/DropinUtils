@@ -16,7 +16,7 @@ local ambient = require("openmw.ambient")
 --      key = 'MY_TWO_COLUMN_SET',
 --      name = 'Allowed / Blocked NPCs',
 --      description = 'Left-click an entry to move it to the other column, right-click to remove it.',
---      renderer = 'twoColumnSet',
+--      renderer = 'twoColumnSet_V2',
 --      default = {
 --         ["caius cosades"] = true,   -- true  -> left column
 --         ["guar"]          = false, -- false -> right column
@@ -47,6 +47,7 @@ local ambient = require("openmw.ambient")
 ---@field colorful? boolean    OPTIONAL. If true, use green/red palette instead of vanilla. Default: false
 ---@field guide? boolean       OPTIONAL. If true, shows an LMB/RMB usage hint below the lists. Default: true
 ---@field guideText? string    OPTIONAL. Override the default guide text (or an l10n key if l10n is set)
+---@field input? boolean       OPTIONAL. If true, adds an input field for each column. Default: true
 
 
 local colorFromGMST = function(gmst)
@@ -95,7 +96,7 @@ local function updateTextColor(state, textWidget)
     textWidget:update()
 end
 
-I.Settings.registerRenderer('twoColumnSet_V1', function(input, set, args)
+I.Settings.registerRenderer('twoColumnSet_V2', function(input, set, args)
     ---@type TwoColumnSetArgs
     args = args or {}
     if type(args.width) ~= "number" then
@@ -103,6 +104,7 @@ I.Settings.registerRenderer('twoColumnSet_V1', function(input, set, args)
     end
     local width = args.width
     local lower = args.lower == true
+    local addInput = args.input ~= false
 
     if type(input) ~= "table" then
         input = {}
@@ -300,9 +302,11 @@ I.Settings.registerRenderer('twoColumnSet_V1', function(input, set, args)
         column.content:add(interval)
         column.content:add(interval)
 
-        column.content:add(makeAddRow(isLeft))
-        column.content:add(interval)
-        column.content:add(interval)
+        if addInput then
+            column.content:add(makeAddRow(isLeft))
+            column.content:add(interval)
+            column.content:add(interval)
+        end
 
         local list = {
             type = ui.TYPE.Flex,
