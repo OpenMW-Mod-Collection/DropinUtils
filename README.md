@@ -23,8 +23,7 @@ I believe that the accessibility of these utilities can and will make community 
   - [Settings Renderers](#settings-renderers)
     - [Text Set](#text-set)
     - [MultiCheckbox](#multicheckbox)
-    - [MultiNumber](#multinumber)
-    - [MultiTextLine](#multitextline)
+    - [MultiInput](#multiinput)
     - [Two Column Set](#two-column-set)
     - [Order List](#order-list)
   - [Other Neat Things](#other-neat-things)
@@ -335,99 +334,85 @@ _Vanilla and colorful versions_
 
 </div>
 
-### MultiNumber
+### MultiInput
 
-This is a modified version of Multinumber from [Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808) with only real difference in how you localize the labels - instead of passing localized strings, you just pass l10n key. Just like you do with OpenMW's renderers.
+Initially it was a lightly modified version of Multinumber from [Sorre's Custom Renderers](https://www.nexusmods.com/morrowind/mods/59808), but later it evolved into supporting text input fields, less boilerplate-y labels and separators.
 
-At its core it's just a single renderer that combines multiple Number fields in one place. Handy for grouping similar values together.
+But at its core it's just a single renderer that combines multiple Number/TextLine fields in one place. Handy for grouping similar values together.
 
 Usage example:
 
 ```lua
+-- number mode
 {
-    key = "DEMO_NUMBERS",
-    name = "multiNumber_name",
-    description = "multiNumber_desc",
-    renderer = "multiNumber_V1",
+    key = 'MY_NUMBERS',
+    renderer = 'multiInput_V1',
+    name = 'myNumbers_name',
+    description = 'myNumbers_desc',
     default = {
-        volume = 0.8,
-        radius = 5,
+        num1 = 0.01,
+        num2 = 1,
     },
     argument = {
-        l10n = "MyMod",   -- OPTIONAL
-        keys = {          -- REQUIRED, not listed keys will be ignored
-            "volume",
-            "radius",
+        mode = "number",            -- REQUIRED: "number" or "text"
+        keys = {                    -- REQUIRED, not listed keys will be ignored
+            "num1",
+            "num2",
         },
-        integer = false,  -- OPTIONAL, default: false
-        min = {           -- OPTIONAL, per-key minimum
-            volume = 0,
-            radius = 1,
+        l10n = "MyModL10nContext",  -- OPTIONAL, label lookup context
+        width = 150,                -- OPTIONAL, default: 80. Width of the input field
+        integer = false,            -- OPTIONAL, number mode only, default: false
+        min = {                     -- OPTIONAL, number mode only, per-field
+            num1 = -10,
+            num2 = -10,
         },
-        max = {           -- OPTIONAL, per-key maximum
-            volume = 1,
-            radius = 20,
+        max = {                     -- OPTIONAL, number mode only, per-field
+            num1 = 10,
+            num2 = 10,
         },
-        width = 100,      -- OPTIONAL, default: 80. Width of each input field
     },
 },
+
+-- text mode
+{
+    key = 'MY_TEXTS',
+    renderer = 'multiInput_V1',
+    name = 'myTexts_name',
+    description = 'myTexts_desc',
+    default = {
+        text1 = "hello",
+        text2 = "world",
+    },
+    argument = {
+        mode = "text",              -- REQUIRED: "number" or "text"
+        keys = {                    -- REQUIRED
+            "text1",
+            "SEPARATOR",            -- "SEPARATOR" adds empty vertical space
+            "text2",
+        },
+        l10n = "MyModL10nContext",  -- OPTIONAL
+        width = 200,                -- OPTIONAL, default: 80
+        lower = true,               -- OPTIONAL, text mode only, default: false
+                                    -- Stored values are always lowercase
+    },
+},
+
+RESULTING STORED VALUES:
 ```
 
 This stores a table like:
 
 ```lua
-{
-    volume = 0.8,
-    radius = 5,
-}
+-- number mode
+{ num1 = 0.01, num2 = 1 }
+
+-- text mode
+{ text1 = "hello", text2 = "world" }
 ```
 
 <div align="center">
 
-<img src="media/renderers_multiNumber.png">
-
-</div>
-
-### MultiTextLine
-
-The same thing as MultiNumber, but for text.
-
-Usage example:
-
-```lua
-{
-    key = "DEMO_TEXTLINES",
-    name = "multiTextLine_name",
-    description = "multiTextLine_desc",
-    renderer = "multiTextLine_V1",
-    default = {
-        greeting = "Hello there",
-        farewell = "Safe travels",
-    },
-    argument = {
-        l10n = "MyMod",   -- OPTIONAL
-        keys = {          -- REQUIRED, not listed keys will be ignored
-            "greeting",
-            "farewell",
-        },
-        lower = false,    -- OPTIONAL, default: false. Lowercases all input values
-        width = 150,      -- OPTIONAL, default: 80. Width of each input field
-    },
-},
-```
-
-This stores a table like:
-
-```lua
-{
-    greeting = "Hello there",
-    farewell = "Safe travels",
-}
-```
-
-<div align="center">
-
-<img src="media/renderers_multiTextLine.png">
+<img src="media/renderers_multiInput.png">
 
 </div>
 
@@ -444,7 +429,7 @@ Usage example:
     key = "DEMO_TWOCOLUMN",
     name = "twoColumnSet_name",
     description = "twoColumnSet_desc",
-    renderer = "twoColumnSet_V2",
+    renderer = "twoColumnSet_V3",
     default = {
         ["caius cosades"] = true,   -- true  -> left column
         ["gaenor"] = false,         -- false -> right column
@@ -458,6 +443,7 @@ Usage example:
         lower      = false,      -- OPTIONAL, default: false. Lowercases new user-typed entries
         colorful   = true,       -- OPTIONAL, default: false. Vanilla text colors vs green/red
         guide      = true,       -- OPTIONAL, default: false. Shows an LMB/RMB usage hint below the lists
+        input      = true,       -- OPTIONAL, default: true. Adds a text input field to each column and enables entry deletion with RMB
     },
 },
 ```

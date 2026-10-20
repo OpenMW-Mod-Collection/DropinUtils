@@ -89,15 +89,17 @@ I.Settings.registerGroup({
             key = "DEMO_TEXTLINES",
             name = "multiTextLine_name",
             description = "multiTextLine_desc",
-            renderer = "multiTextLine_V1",
+            renderer = "multiInput_V1",
             default = {
                 greeting = "Hello there",
                 farewell = "Safe travels"
             },
             argument = {
+                mode = "text",
                 l10n = "DropinUtils",
                 keys = {
                     "greeting",
+                    "SEPARATOR",
                     "farewell",
                 },
                 width = 150,
@@ -107,12 +109,13 @@ I.Settings.registerGroup({
             key = "DEMO_NUMBERS",
             name = "multiNumber_name",
             description = "multiNumber_desc",
-            renderer = "multiNumber_V1",
+            renderer = "multiInput_V1",
             default = {
                 volume = 0.8,
                 radius = 5
             },
             argument = {
+                mode = "number",
                 l10n = "DropinUtils",
                 keys = {
                     "volume",
@@ -146,7 +149,7 @@ I.Settings.registerGroup({
             key = "DEMO_TWOCOLUMN",
             name = "twoColumnSet_name",
             description = "twoColumnSet_desc",
-            renderer = "twoColumnSet_V2",
+            renderer = "twoColumnSet_V3",
             default = {
                 ["caius cosades"] = true,
                 ["gaenor"] = false,

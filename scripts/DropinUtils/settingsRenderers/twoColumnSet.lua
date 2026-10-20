@@ -16,7 +16,7 @@ local ambient = require("openmw.ambient")
 --      key = 'MY_TWO_COLUMN_SET',
 --      name = 'Allowed / Blocked NPCs',
 --      description = 'Left-click an entry to move it to the other column, right-click to remove it.',
---      renderer = 'twoColumnSet_V2',
+--      renderer = 'twoColumnSet_V3',
 --      default = {
 --         ["caius cosades"] = true,   -- true  -> left column
 --         ["guar"]          = false, -- false -> right column
@@ -30,6 +30,7 @@ local ambient = require("openmw.ambient")
 --         colorful   = false,        -- OPTIONAL, default: false. Vanilla text colors vs green/red
 --         guide      = true,         -- OPTIONAL, default: false. Shows an LMB/RMB usage hint below the lists
 --         guideText  = nil,          -- OPTIONAL, override the default guide text (or an l10n key if l10n is set)
+--         input      = true,         -- OPTIONAL, default: true. Adds a text input field to each column and enables entry deletion with RMB
 --      },
 --   },
 --
@@ -96,7 +97,7 @@ local function updateTextColor(state, textWidget)
     textWidget:update()
 end
 
-I.Settings.registerRenderer('twoColumnSet_V2', function(input, set, args)
+I.Settings.registerRenderer('twoColumnSet_V3', function(input, set, args)
     ---@type TwoColumnSetArgs
     args = args or {}
     if type(args.width) ~= "number" then
@@ -180,7 +181,7 @@ I.Settings.registerRenderer('twoColumnSet_V2', function(input, set, args)
                                 ambient.playSound('menu click', {})
                                 input[key] = not isLeft
                                 set(input)
-                            elseif e.button == 3 then
+                            elseif e.button == 3 and addInput then
                                 -- right click: remove entirely
                                 ambient.playSound('menu click', {})
                                 input[key] = nil
@@ -374,7 +375,9 @@ I.Settings.registerRenderer('twoColumnSet_V2', function(input, set, args)
             template = I.MWUI.templates.textParagraph,
             props = {
                 size = util.vector2(width * 2 + 3, 0),
-                text = 'Left click: move between columns.\nRight click: remove.',
+                text = addInput
+                    and 'Left click: move between columns.\nRight click: remove.'
+                    or 'Left click: move between columns.',
                 textAlignH = ui.ALIGNMENT.Center,
                 textColor = MORROWIND_TEXT_STATES.disabled.color,
                 alpha = MORROWIND_TEXT_STATES.disabled.alpha,

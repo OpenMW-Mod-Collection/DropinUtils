@@ -12,11 +12,11 @@ soundOn: Sound
 questMarkers: Quest Markers
 particlesOn: Particles
 multiTextLine_name: Greeting Text
-multiTextLine_desc: "multiTextLine renderer: a few labeled single-line text fields."
+multiTextLine_desc: "multiInput renderer, text mode: a few labeled single-line text fields."
 greeting: Greeting
 farewell: Farewell
 multiNumber_name: Tuning Values
-multiNumber_desc: "multiNumber renderer: labeled numeric fields with min/max clamping."
+multiNumber_desc: "multiInput renderer, number mode: labeled numeric fields with min/max clamping."
 volume: Volume
 radius: Radius
 textSet_name: Extra Blacklist IDs

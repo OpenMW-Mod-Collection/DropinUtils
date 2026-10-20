@@ -1,6 +1,5 @@
 MENU: scripts/DropinUtils/settingsRenderers/multiCheckbox.lua
-MENU: scripts/DropinUtils/settingsRenderers/multiTextLine.lua
-MENU: scripts/DropinUtils/settingsRenderers/multiNumber.lua
+MENU: scripts/DropinUtils/settingsRenderers/multiInput.lua
 MENU: scripts/DropinUtils/settingsRenderers/textSet.lua
 MENU: scripts/DropinUtils/settingsRenderers/twoColumnSet.lua
 MENU: scripts/DropinUtils/settingsRenderers/orderList.lua
