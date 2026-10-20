@@ -396,8 +396,6 @@ Usage example:
                                     -- Stored values are always lowercase
     },
 },
-
-RESULTING STORED VALUES:
 ```
 
 This stores a table like:
