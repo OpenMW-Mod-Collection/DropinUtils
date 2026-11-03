@@ -2,7 +2,7 @@
 -- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 
 -- ============================================================================
--- settingsCache — mirror a StorageSection into a plain table (no lookup cost)
+-- settingsCache - mirror a StorageSection into a plain table (no lookup cost)
 -- ============================================================================
 -- USAGE:
 --   local async   = require("openmw.async")
@@ -38,7 +38,7 @@ function M.new(section, async, onChange)
             -- Single key changed
             cache[key] = section:get(key)
         else
-            -- Full reset — rebuild from scratch
+            -- Full reset - rebuild from scratch
             local fresh = section:asTable()
             -- Remove keys that no longer exist
             for k in pairs(cache) do

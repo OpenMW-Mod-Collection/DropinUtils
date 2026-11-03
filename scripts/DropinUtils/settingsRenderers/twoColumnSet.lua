@@ -9,9 +9,9 @@ local util = require("openmw.util")
 local ambient = require("openmw.ambient")
 
 -- ============================================================================
--- twoColumnSet renderer — two sortable columns of string entries (e.g. allow/block lists)
+-- twoColumnSet renderer - two sortable columns of string entries (e.g. allow/block lists)
 -- ============================================================================
--- USAGE (settings config entry):
+-- Example:
 --   {
 --      key = 'MY_TWO_COLUMN_SET',
 --      name = 'Allowed / Blocked NPCs',

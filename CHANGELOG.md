@@ -1,5 +1,9 @@
 # Bor's Drop-in Utils (OpenMW)
 
+## 1.3
+
+- Added new settings renderer: Time
+
 ## 1.2
 
 - Replaced MultiNumber and MultiTextLine with a merged MultiInput renderer for easier maintaining. It is advised to switch from MultiNumber to MultiInput since the former had a breaking issue when using "min" and "max" arguments

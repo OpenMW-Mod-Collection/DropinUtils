@@ -7,7 +7,7 @@ local async = require("openmw.async")
 local util = require("openmw.util")
 
 -- ============================================================================
--- MultiInput renderer — a stack of labeled inputs, in "text" or "number" mode
+-- MultiInput renderer - a stack of labeled inputs, in "text" or "number" mode
 -- ============================================================================
 -- All arguments are set ONCE and apply to every field, except min/max, which
 -- are per-field (number mode).

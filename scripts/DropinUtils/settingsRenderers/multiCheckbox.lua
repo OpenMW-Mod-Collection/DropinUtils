@@ -9,7 +9,7 @@ local util = require("openmw.util")
 local ambient = require("openmw.ambient")
 
 -- ============================================================================
--- multiCheckbox renderer — a row of labeled checkboxes stored as one table
+-- multiCheckbox renderer - a row of labeled checkboxes stored as one table
 -- ============================================================================
 -- USAGE (settings config entry):
 --   {

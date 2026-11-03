@@ -11,7 +11,7 @@ local ambient = require("openmw.ambient")
 local auxUi = require("openmw_aux.ui")
 
 -- ============================================================================
--- dependencyChecker — verify required plugins/interfaces are present, popup on failure
+-- dependencyChecker - verify required plugins/interfaces are present, popup on failure
 -- ============================================================================
 -- USAGE:
 --   local deps = require("scripts.MyMod.utils.dependencyChecker")

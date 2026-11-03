@@ -2,6 +2,7 @@
 ---@omw-context menu
 
 local I = require("openmw.interfaces")
+local time = require("openmw_aux.time")
 
 local SettingsPresets = require("scripts.DropinUtils.utils.presetManager")
 
@@ -176,5 +177,14 @@ I.Settings.registerGroup({
                 "Poison",
             },
         },
+        {
+            key = "MY_TIME",
+            name = "Time Settings Renderer",
+            renderer = "time_V1",
+            default = 2 * time.day + 5 * time.hour,
+            argument = {
+                days = true,
+            },
+        }
     },
 })

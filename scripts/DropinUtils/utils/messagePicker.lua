@@ -1,7 +1,7 @@
 ---@omw-context local|global
 -- Part of Bor's Drop-in Utils project: https://github.com/OpenMW-Mod-Collection/DropinUtils
 -- ============================================================================
--- Messages — pick a random localized message from a numbered key series
+-- Messages - pick a random localized message from a numbered key series
 -- ============================================================================
 -- USAGE:
 --   local core     = require("openmw.core")

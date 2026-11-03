@@ -6,7 +6,7 @@ local ui = require("openmw.ui")
 local async = require("openmw.async")
 
 -- ============================================================================
--- textSet renderer — a free-form, add/remove set of strings (e.g. an ID list)
+-- textSet renderer - a free-form, add/remove set of strings (e.g. an ID list)
 -- ============================================================================
 -- USAGE (settings config entry):
 --   {

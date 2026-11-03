@@ -26,6 +26,7 @@ I believe that the accessibility of these utilities can and will make community 
     - [MultiInput](#multiinput)
     - [Two Column Set](#two-column-set)
     - [Order List](#order-list)
+    - [Time](#time)
   - [Other Neat Things](#other-neat-things)
     - [Virtual List](#virtual-list)
     - [Super Settings Renderers](#super-settings-renderers)
@@ -504,6 +505,34 @@ This stores a table like:
 <div align="center">
 
 <img src="media/renderers_orderList.png">
+
+</div>
+
+### Time
+
+Convenient settings renderer for inputting time by day, hour, minute and seconds. Looks a little odd, but that's the best I could come up with for now.
+
+Usage example:
+
+```lua
+{
+    key = "MY_TIME",
+    name = "Time Settings Renderer",
+    renderer = "time_V1",
+    default = 2 * time.day + 5 * time.hour,
+    argument = {
+        days = true, -- OPTIONAL, set to false to hide the days column. Default: true
+    },
+}
+```
+
+Returns the input in seconds.
+
+<div align="center">
+
+<img src="media/renderers_time.png">
+
+_Buttons can also be held down!_
 
 </div>
 
