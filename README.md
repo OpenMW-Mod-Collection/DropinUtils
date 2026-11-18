@@ -92,10 +92,6 @@ deps.checkAll("MyMod", {
 }, "Optional extra info shown under the error list.")
 ```
 
-`modName` is used both as the log prefix and as the popup header. The optional third argument is extra info shown below the dependency errors; leave it out and a short "check the log / user error" note is used instead.
-
-The old `checkAll(modName, title, body, depList)` form is still accepted: `title` is ignored and `body` is treated as the extra info.
-
 <div align="center">
 
 <img src="media/depCheck_message.png">
