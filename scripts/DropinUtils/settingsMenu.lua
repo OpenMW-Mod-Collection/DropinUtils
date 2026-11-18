@@ -166,9 +166,9 @@ I.Settings.registerGroup({
         },
         {
             key = 'MY_ORDER_LIST',
-            name = 'Priority order',
-            description = 'Click an entry to select it, then use the buttons above the list.',
-            renderer = 'orderList_V1',
+            name = 'orderList_name',
+            description = 'orderList_desc',
+            renderer = 'orderList_V2',
             default = {
                 "Fire",
                 "Frost",
@@ -179,7 +179,8 @@ I.Settings.registerGroup({
         },
         {
             key = "MY_TIME",
-            name = "Time Settings Renderer",
+            name = "time_name",
+            description = "time_desc",
             renderer = "time_V1",
             default = 2 * time.day + 5 * time.hour,
             argument = {

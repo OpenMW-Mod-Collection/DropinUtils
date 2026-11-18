@@ -5,6 +5,8 @@ local I = require("openmw.interfaces")
 local ui = require("openmw.ui")
 local async = require("openmw.async")
 
+local RENDERER_KEY = 'textSet_V1'
+
 -- ============================================================================
 -- textSet renderer - a free-form, add/remove set of strings (e.g. an ID list)
 -- ============================================================================
@@ -13,7 +15,7 @@ local async = require("openmw.async")
 --      key = 'MY_BLACKLIST',
 --      name = 'Blacklist NPC by ID',
 --      description = 'Add NPC IDs to the blacklist.',
---      renderer = 'textSet',
+--      renderer = 'textSet_V1',
 --      default = {
 --         ["caius cosades"] = true,
 --         ["guar"] = true,
@@ -34,7 +36,7 @@ local async = require("openmw.async")
 ---                         If true, all input text will be lowered.
 ---                         It does not lower your default values due to how Lua API works.
 
-I.Settings.registerRenderer('textSet_V1', function(input, set, arg)
+I.Settings.registerRenderer(RENDERER_KEY, function(input, set, arg)
     ---@type TextSetArgs
     arg = arg or {}
     local lower = arg.lower == true

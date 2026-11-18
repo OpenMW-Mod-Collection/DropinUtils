@@ -27,7 +27,7 @@ local settings = SettingsCache.new(
 -- since Morrowind.esm is always loaded. Swap this for a real dependency to
 -- test the failure popup.
 -- ----------------------------------------------------------------------
-deps.checkAll("DropinUtils", "Drop-in Utils Demo", nil, {
+deps.checkAll("DropinUtils", {
     { plugin = "Morrowind.esm", interface = true },
 })
 

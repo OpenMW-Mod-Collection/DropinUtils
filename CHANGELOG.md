@@ -1,5 +1,13 @@
 # Bor's Drop-in Utils (OpenMW)
 
+## 1.3.1
+
+- Order List: bumped to version 2
+- Order List: changed button text with arrows for better looks and readability
+- Dependency Checker: Improved the UI output
+- Made sure that the all code examples use the correct settings renderers IDs
+- Updated the demo settings descriptions to be actually practical
+
 ## 1.3
 
 - Added new settings renderer: Time

@@ -6,6 +6,8 @@ local ui = require("openmw.ui")
 local async = require("openmw.async")
 local util = require("openmw.util")
 
+local RENDERER_KEY = 'multiInput_V1'
+
 -- ============================================================================
 -- MultiInput renderer - a stack of labeled inputs, in "text" or "number" mode
 -- ============================================================================
@@ -123,7 +125,7 @@ local modes = {
 ---@param input table<string, number|string> Current values keyed by field name
 ---@param set fun(input: table<string, number|string>) Callback to persist updated values
 ---@param args MultiInputArgs
-I.Settings.registerRenderer('multiInput_V1', function(input, set, args)
+I.Settings.registerRenderer(RENDERER_KEY, function(input, set, args)
     ---@diagnostic disable-next-line: missing-fields
     args = args or {}
     local keys = args.keys or {}

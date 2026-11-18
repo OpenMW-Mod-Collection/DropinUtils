@@ -8,6 +8,8 @@ local ui = require("openmw.ui")
 local util = require("openmw.util")
 local ambient = require("openmw.ambient")
 
+local RENDERER_KEY = 'multiCheckbox_V1'
+
 -- ============================================================================
 -- multiCheckbox renderer - a row of labeled checkboxes stored as one table
 -- ============================================================================
@@ -16,7 +18,7 @@ local ambient = require("openmw.ambient")
 --      key = 'MY_TOGGLES',
 --      name = 'Feature Toggles',
 --      description = 'Pick which features are active.',
---      renderer = 'multiCheckbox',
+--      renderer = 'multiCheckbox_V1',
 --      default = {
 --         optionA = true,
 --         optionB = false,
@@ -144,7 +146,7 @@ local function interactedState(states, isChecked)
    if isChecked then return states.enabledInteracted else return states.disabledInteracted end
 end
 
-I.Settings.registerRenderer('multiCheckbox_V1', function(input, set, args)
+I.Settings.registerRenderer(RENDERER_KEY, function(input, set, args)
    local buttonHeld = false
 
    if type(input) ~= "table" then input = {} end

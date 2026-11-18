@@ -3,21 +3,23 @@
 -- Based on the twoColumnSet renderer from Bor's Drop-in Utils project:
 -- https://github.com/OpenMW-Mod-Collection/DropinUtils
 local I = require("openmw.interfaces")
-local core = require("openmw.core")
+local ambient = require("openmw.ambient")
 local async = require("openmw.async")
+local core = require("openmw.core")
 local ui = require("openmw.ui")
 local util = require("openmw.util")
-local ambient = require("openmw.ambient")
+
+local RENDERER_KEY = "orderList_V2"
 
 -- ============================================================================
--- orderList_V1 renderer - a list of string entries the player can reorder
+-- orderList renderer - a list of string entries the player can reorder
 -- ============================================================================
 -- USAGE (settings config entry):
 --   {
 --      key = 'MY_ORDER_LIST',
 --      name = 'Priority order',
 --      description = 'Click an entry to select it, then use the buttons above the list.',
---      renderer = 'orderList_V1',
+--      renderer = 'orderList_V2',
 --      default = {
 --         "Fire",
 --         "Frost",
@@ -44,42 +46,75 @@ local ambient = require("openmw.ambient")
 ---                      Values below ~200 make the button row wider than the list.
 
 local DEFAULT_WIDTH = 220
-local BUTTON_TEXT_HEIGHT = 16
+local ARROW_SIZE = 14
+local BUTTON_HEIGHT = ARROW_SIZE + 4 -- same height for single and triple arrows
+local ARROW_UP = ui.texture { path = "textures/omw_menu_scroll_up.dds" }
+local ARROW_DOWN = ui.texture { path = "textures/omw_menu_scroll_down.dds" }
 
 local colorFromGMST = function(gmst)
     local colorString = core.getGMST(gmst)
     local numberTable = {}
     for numberString in colorString:gmatch("([^,]+)") do
-        if #numberTable == 3 then break end
+        if #numberTable == 3 then
+            break
+        end
         local number = tonumber(numberString:match("^%s*(.-)%s*$"))
         if number then
             table.insert(numberTable, number / 255)
         end
     end
 
-    if #numberTable < 3 then error('Invalid color GMST name: ' .. gmst) end
+    if #numberTable < 3 then
+        error("Invalid color GMST name: " .. gmst)
+    end
 
     return util.color.rgb(table.unpack(numberTable))
 end
 
 local TEXT_STATES = {
-    resting       = { color = colorFromGMST('fontcolor_color_normal'), alpha = 1.0 },
-    hover         = { color = colorFromGMST('fontcolor_color_normal_over'), alpha = 1.0 },
-    pressed       = { color = colorFromGMST('fontcolor_color_normal_pressed'), alpha = 1.0 },
-    active        = { color = colorFromGMST('fontcolor_color_active'), alpha = 1.0 },
-    activeHover   = { color = colorFromGMST('fontcolor_color_active_over'), alpha = 1.0 },
-    activePressed = { color = colorFromGMST('fontcolor_color_active_pressed'), alpha = 1.0 },
-    disabled      = { color = colorFromGMST('fontcolor_color_disabled'), alpha = 0.75 },
+    resting = { color = colorFromGMST("fontcolor_color_normal"), alpha = 1.0 },
+    hover = {
+        color = colorFromGMST("fontcolor_color_normal_over"),
+        alpha = 1.0,
+    },
+    pressed = {
+        color = colorFromGMST("fontcolor_color_normal_pressed"),
+        alpha = 1.0,
+    },
+    active = { color = colorFromGMST("fontcolor_color_active"), alpha = 1.0 },
+    activeHover = {
+        color = colorFromGMST("fontcolor_color_active_over"),
+        alpha = 1.0,
+    },
+    activePressed = {
+        color = colorFromGMST("fontcolor_color_active_pressed"),
+        alpha = 1.0,
+    },
+    disabled = {
+        color = colorFromGMST("fontcolor_color_disabled"),
+        alpha = 0.75,
+    },
+}
+
+local ARROW_STATES = {
+    enabled = { color = util.color.rgb(1, 1, 1), alpha = 1.0 },
+    disabled = TEXT_STATES.disabled,
 }
 
 local interval = {
-    template = I.MWUI.templates.interval
+    template = I.MWUI.templates.interval,
 }
 
 local function updateTextColor(state, textWidget)
     textWidget.layout.props.textColor = state.color
     textWidget.layout.props.alpha = state.alpha
     textWidget:update()
+end
+
+local function updateImageColor(state, imageWidget)
+    imageWidget.layout.props.color = state.color
+    imageWidget.layout.props.alpha = state.alpha
+    imageWidget:update()
 end
 
 local selectedKey = nil
@@ -90,7 +125,9 @@ end
 
 local function indexOf(list, key)
     for i, v in ipairs(list) do
-        if v == key then return i end
+        if v == key then
+            return i
+        end
     end
     return nil
 end
@@ -103,7 +140,9 @@ local function targetIndex(list, idx, action)
     if action == "stepUp" or action == "stepDown" then
         local dir = action == "stepUp" and -1 or 1
         local j = idx + dir
-        if j < 1 or j > count then return nil end
+        if j < 1 or j > count then
+            return nil
+        end
         if isLocked(list[j]) then
             while j >= 1 and j <= count and isLocked(list[j]) do
                 j = j + dir
@@ -113,25 +152,33 @@ local function targetIndex(list, idx, action)
         return j
     elseif action == "jumpUp" then
         local j = idx - 1
-        while j >= 1 and not isLocked(list[j]) do j = j - 1 end
+        while j >= 1 and not isLocked(list[j]) do
+            j = j - 1
+        end
         local target = j < 1 and 1 or j
-        if target == idx then return nil end
+        if target == idx then
+            return nil
+        end
         return target
     elseif action == "jumpDown" then
         local j = idx + 1
-        while j <= count and not isLocked(list[j]) do j = j + 1 end
+        while j <= count and not isLocked(list[j]) do
+            j = j + 1
+        end
         local target = j > count and count or j
-        if target == idx then return nil end
+        if target == idx then
+            return nil
+        end
         return target
     end
     return nil
 end
 
-I.Settings.registerRenderer('orderList_V1', function(value, set, args)
+I.Settings.registerRenderer(RENDERER_KEY, function(value, set, args)
     ---@type OrderListArgs
     args = args or {}
     if args.width ~= nil and type(args.width) ~= "number" then
-        error("orderList_V1: 'width' argument must be a number")
+        error(RENDERER_KEY .. ": 'width' argument must be a number")
     end
     local width = args.width or DEFAULT_WIDTH
 
@@ -146,26 +193,32 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
         table.insert(list, tostring(v))
     end
 
-    local rows = {}         -- key -> text widget
-    local buttons = {}      -- action -> text widget
+    local rows = {} -- key -> text widget
+    local buttons = {} -- action -> list of arrow image widgets
     local hoveredKey = nil
-    local hoveredButton = nil
     local pressedKey = nil
-    local pressedButton = nil
 
     local function canDo(action)
-        if selectedKey == nil then return false end
+        if selectedKey == nil then
+            return false
+        end
         local idx = indexOf(list, selectedKey)
-        if idx == nil then return false end
+        if idx == nil then
+            return false
+        end
         return targetIndex(list, idx, action) ~= nil
     end
 
     local function doAction(action)
-        if not canDo(action) then return end
+        if not canDo(action) then
+            return
+        end
         local idx = indexOf(list, selectedKey)
         local target = targetIndex(list, idx, action)
-        if not target then return end
-        ambient.playSound('menu click', {})
+        if not target then
+            return
+        end
+        ambient.playSound("menu click", {})
         table.remove(list, idx)
         table.insert(list, target, selectedKey)
         set(list)
@@ -173,7 +226,9 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
 
     local function paintRow(key)
         local widget = rows[key]
-        if not widget then return end
+        if not widget then
+            return
+        end
         local pressed = key == pressedKey
         local hovered = key == hoveredKey
         local state
@@ -198,73 +253,70 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
     end
 
     local function paintButton(action)
-        local widget = buttons[action]
-        if not widget then return end
-        local state
-        if not canDo(action) then
-            state = TEXT_STATES.disabled
-        elseif pressedButton == action then
-            state = TEXT_STATES.pressed
-        elseif hoveredButton == action then
-            state = TEXT_STATES.hover
-        else
-            state = TEXT_STATES.resting
+        local images = buttons[action]
+        if not images then
+            return
         end
-        updateTextColor(state, widget)
+        local state = canDo(action) and ARROW_STATES.enabled or ARROW_STATES.disabled
+        for _, image in ipairs(images) do
+            updateImageColor(state, image)
+        end
     end
 
     local function refreshAll()
-        for key in pairs(rows) do paintRow(key) end
-        for action in pairs(buttons) do paintButton(action) end
+        for key in pairs(rows) do
+            paintRow(key)
+        end
+        for action in pairs(buttons) do
+            paintButton(action)
+        end
     end
 
     -- ----------------------------------------------------------------
-    -- control buttons: box > padding > text, stretched over the row
+    -- control buttons: box > padding > arrow images
     -- ----------------------------------------------------------------
-    local function makeButton(action, label)
-        local text = ui.create({
-            type = ui.TYPE.Text,
-            template = I.MWUI.templates.textNormal,
-            props = {
-                autoSize = false,
-                size = util.vector2(width / 4 - 9, BUTTON_TEXT_HEIGHT),
-                text = label,
-                textAlignH = ui.ALIGNMENT.Center,
-                textAlignV = ui.ALIGNMENT.Center,
-            },
-        })
-        buttons[action] = text
+    local function makeButton(action, arrow, count)
+        local images = {}
+        local arrows = ui.content {}
+        for _ = 1, count do
+            local image = ui.create {
+                type = ui.TYPE.Image,
+                props = {
+                    resource = arrow,
+                    size = util.vector2(ARROW_SIZE, ARROW_SIZE),
+                },
+            }
+            images[#images + 1] = image
+            arrows:add(image)
+        end
+        buttons[action] = images
 
         return {
             template = I.MWUI.templates.box,
-            content = ui.content({ {
-                template = I.MWUI.templates.padding,
-                content = ui.content({ text }),
-            } }),
+            content = ui.content {
+                {
+                    template = I.MWUI.templates.padding,
+                    content = ui.content {
+                        {
+                            type = ui.TYPE.Flex,
+                            props = {
+                                autoSize = false,
+                                size = util.vector2(
+                                    width / 4 - 9,
+                                    BUTTON_HEIGHT
+                                ),
+                                horizontal = true,
+                                align = ui.ALIGNMENT.Center,
+                                arrange = ui.ALIGNMENT.Center,
+                            },
+                            content = arrows,
+                        },
+                    },
+                },
+            },
             events = {
-                mousePress = async:callback(function(e)
-                    if e.button == 1 then
-                        pressedButton = action
-                        paintButton(action)
-                    end
-                end),
-                mouseRelease = async:callback(function(e)
-                    if e.button == 1 then
-                        pressedButton = nil
-                        paintButton(action)
-                    end
-                end),
                 mouseClick = async:callback(function()
                     doAction(action)
-                end),
-                focusGain = async:callback(function()
-                    hoveredButton = action
-                    paintButton(action)
-                end),
-                focusLoss = async:callback(function()
-                    if hoveredButton == action then hoveredButton = nil end
-                    if pressedButton == action then pressedButton = nil end
-                    paintButton(action)
                 end),
             },
         }
@@ -276,12 +328,12 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
             horizontal = true,
             gap = 4,
         },
-        content = ui.content({
-            makeButton("jumpUp", "Up"),
-            makeButton("stepUp", "+1"),
-            makeButton("stepDown", "-1"),
-            makeButton("jumpDown", "Down"),
-        }),
+        content = ui.content {
+            makeButton("jumpUp", ARROW_UP, 3),
+            makeButton("stepUp", ARROW_UP, 1),
+            makeButton("stepDown", ARROW_DOWN, 1),
+            makeButton("jumpDown", ARROW_DOWN, 3),
+        },
     }
 
     -- ----------------------------------------------------------------
@@ -290,14 +342,14 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
     local function makeEntryRow(key)
         local locked = isLocked(key)
 
-        local entryText = ui.create({
+        local entryText = ui.create {
             template = I.MWUI.templates.textNormal,
             props = {
                 text = key,
                 textAlignH = ui.ALIGNMENT.Start,
                 textAlignV = ui.ALIGNMENT.Center,
             },
-        })
+        }
         rows[key] = entryText
 
         local flex = {
@@ -310,7 +362,7 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
             external = {
                 stretch = 1,
             },
-            content = ui.content({ entryText }),
+            content = ui.content { entryText },
         }
 
         if not locked then
@@ -328,7 +380,7 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
                     end
                 end),
                 mouseClick = async:callback(function()
-                    ambient.playSound('menu click', {})
+                    ambient.playSound("menu click", {})
                     if selectedKey == key then
                         selectedKey = nil
                     else
@@ -341,8 +393,12 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
                     paintRow(key)
                 end),
                 focusLoss = async:callback(function()
-                    if hoveredKey == key then hoveredKey = nil end
-                    if pressedKey == key then pressedKey = nil end
+                    if hoveredKey == key then
+                        hoveredKey = nil
+                    end
+                    if pressedKey == key then
+                        pressedKey = nil
+                    end
                     paintRow(key)
                 end),
             }
@@ -350,7 +406,7 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
 
         return {
             template = I.MWUI.templates.padding,
-            content = ui.content({ flex }),
+            content = ui.content { flex },
         }
     end
 
@@ -361,7 +417,7 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
             arrange = ui.ALIGNMENT.Start,
             size = util.vector2(width, 0),
         },
-        content = ui.content({}),
+        content = ui.content {},
     }
 
     for _, key in ipairs(list) do
@@ -373,18 +429,20 @@ I.Settings.registerRenderer('orderList_V1', function(value, set, args)
         props = {
             horizontal = false,
         },
-        content = ui.content({
+        content = ui.content {
             controls,
             interval,
             interval,
             {
                 template = I.MWUI.templates.box,
-                content = ui.content({ {
-                    template = I.MWUI.templates.padding,
-                    content = ui.content({ listWidget }),
-                } }),
+                content = ui.content {
+                    {
+                        template = I.MWUI.templates.padding,
+                        content = ui.content { listWidget },
+                    },
+                },
             },
-        }),
+        },
     }
 
     refreshAll()

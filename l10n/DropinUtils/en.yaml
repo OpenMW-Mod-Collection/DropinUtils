@@ -3,29 +3,32 @@ page_desc: Live showcase of every renderer and utility in Bor's Drop-in Utils.
 
 group_presets_name: Presets
 preset_name: Preset
-preset_desc: Applies a bundle of the Tuning Values above. See presetManager.lua.
+preset_desc: Applies a bundle of values to the demo settings. See presetManager.lua.
 
 group_renderers_name: Renderers
-toggles_name: Feature Toggles
-toggles_desc: "multiCheckbox renderer: independent booleans in one table."
+toggles_name: MultiCheckbox
+toggles_desc: "Packs an arbitrary number of labeled checkboxes into one setting, storing the results as a table of booleans."
 soundOn: Sound
 questMarkers: Quest Markers
 particlesOn: Particles
-multiTextLine_name: Greeting Text
-multiTextLine_desc: "multiInput renderer, text mode: a few labeled single-line text fields."
+multiTextLine_name: MultiInput (text mode)
+multiTextLine_desc: "Groups multiple labeled single-line text fields into one setting, making it easy to keep related strings together."
 greeting: Greeting
 farewell: Farewell
-multiNumber_name: Tuning Values
-multiNumber_desc: "multiInput renderer, number mode: labeled numeric fields with min/max clamping."
+multiNumber_name: MultiInput (number mode)
+multiNumber_desc: "Groups multiple labeled numeric fields into one setting, with optional per-field minimum and maximum limits."
 volume: Volume
 radius: Radius
-textSet_name: Extra Blacklist IDs
-textSet_desc: "textSet renderer: a free-form add/remove set of strings."
-twoColumnSet_name: Allowed / Blocked NPCs
-twoColumnSet_desc: "twoColumnSet renderer: left-click to move, right-click to remove."
+textSet_name: Text Set
+textSet_desc: "Maintains a free-form set of strings as a lookup table, such as a list of record IDs."
+twoColumnSet_name: Two Column Set
+twoColumnSet_desc: "Keeps two sets of strings in one table: left-column entries are true, right-column entries are false. Left-click moves an entry, right-click removes it."
+orderList_name: Order List
+orderList_desc: "Lets the player reorder a list of entries with buttons and supports locked separators."
+time_name: Time
+time_desc: "Inputs a time value as days, hours, minutes and seconds, then stores the result in seconds."
 
-# Used by messagePicker.lua (utils/messagePicker.lua). Numbered variants;
-# the first missing index stops the search, so at least "_1" is required.
+# used by Message Picker
 DemoGreeting_1: Hello, outlander.
 DemoGreeting_2: Well met, traveler.
 DemoGreeting_3: You there - nice weather for it, isn't it?

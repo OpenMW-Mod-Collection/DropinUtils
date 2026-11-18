@@ -67,7 +67,7 @@ print(settings.someKey)
 
 This module checks a list of required dependencies and reports any missing plugin, premature interface call (load order issue), or outdated version during player-script initialization or any other early setup step.
 
-When a dependency fails, it prints each problem to the log and shows a generic popup to the user so they can diagnose the issue by themselves.
+When a dependency fails, it prints each problem to the log and shows a popup titled with `modName` that lists the same problems, so the player can see what's wrong without opening the log.
 
 Usage example:
 
@@ -76,10 +76,10 @@ local I = require("openmw.interfaces")
 
 local deps = require("scripts.MyMod.utils.dependencyChecker")
 
-deps.checkAll("MyMod", "My Cool and Awesome Mod", nil, {
+deps.checkAll("MyMod", {
     {
         plugin = "FollowerDetectionUtil.omwscripts",
-        interface = I.FollowerDetectionUtil,     -- required if the dependency must load before this mod
+        interface = I.FollowerDetectionUtil,     -- required if the dependency must load before this mod, otherwise set to true
         minVersion = 3,                          -- optional
         curVersion = I.FollowerDetectionUtil     -- optional
             and I.FollowerDetectionUtil.version
@@ -89,10 +89,12 @@ deps.checkAll("MyMod", "My Cool and Awesome Mod", nil, {
         plugin = "h3lp_yours3lf.omwscripts",
         interface = true, -- valid when load order does not matter
     }
-})
+}, "Optional extra info shown under the error list.")
 ```
 
-`modName` is just used for the log prefix, `header` is the popup title, and `body` is optional - leave it `nil` and it'll fall back to the generic "something went wrong, check your logs" text baked into the module.
+`modName` is used both as the log prefix and as the popup header. The optional third argument is extra info shown below the dependency errors; leave it out and a short "check the log / user error" note is used instead.
+
+The old `checkAll(modName, title, body, depList)` form is still accepted: `title` is ignored and `body` is treated as the extra info.
 
 <div align="center">
 
@@ -476,7 +478,7 @@ Usage example:
     key = 'MY_ORDER_LIST',
     name = 'Priority order',
     description = 'Click an entry to select it, then use the buttons above the list.',
-    renderer = 'orderList_V1',
+    renderer = 'orderList_V2',
     default = {
         "Fire",
         "Frost",
@@ -523,7 +525,7 @@ Usage example:
     argument = {
         days = true, -- OPTIONAL, set to false to hide the days column. Default: true
     },
-}
+},
 ```
 
 Returns the input in seconds.

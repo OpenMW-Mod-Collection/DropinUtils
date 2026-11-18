@@ -8,6 +8,8 @@ local ui = require("openmw.ui")
 local util = require("openmw.util")
 local ambient = require("openmw.ambient")
 
+local RENDERER_KEY = 'twoColumnSet_V3'
+
 -- ============================================================================
 -- twoColumnSet renderer - two sortable columns of string entries (e.g. allow/block lists)
 -- ============================================================================
@@ -97,7 +99,7 @@ local function updateTextColor(state, textWidget)
     textWidget:update()
 end
 
-I.Settings.registerRenderer('twoColumnSet_V3', function(input, set, args)
+I.Settings.registerRenderer(RENDERER_KEY, function(input, set, args)
     ---@type TwoColumnSetArgs
     args = args or {}
     if type(args.width) ~= "number" then
