@@ -10,13 +10,12 @@ local ambient = require('openmw.ambient')
 local time = require('openmw_aux.time')
 local I = require('openmw.interfaces')
 
-
 -- ============================================================================
 -- Example:
 --     {
 --         key = "MY_TIME",
 --         name = "Time Settings Renderer",
---         renderer = "time_V1",
+--         renderer = "time_V2",
 --         default = 2 * time.day + 5 * time.hour,
 --         argument = {
 --             days = true, -- OPTIONAL, set to false to hide the days column. Default: true
@@ -27,7 +26,7 @@ local I = require('openmw.interfaces')
 -- ============================================================================
 
 local v2 = util.vector2
-local RENDERER_KEY = 'time_V1'
+local RENDERER_KEY = 'time_V2'
 local LABEL_DAYS = 'Days:'
 local SEPARATOR = ':'
 local INPUT_WIDTH = 26 -- text edit / button width, hours / minutes / seconds
@@ -35,7 +34,6 @@ local BUTTON_TEXT_HEIGHT = 16
 local GAP_DAYS = 30    -- day column -> time input
 local INTERVAL = { template = I.MWUI.templates.interval }
 
--- hold-to-repeat tuning (real-time seconds)
 local HOLD_DELAY = 0.5   -- how long to hold before repeating starts
 local REPEAT_SLOW = 0.15 -- repeat interval right after the delay
 local REPEAT_FAST = 0.05 -- repeat interval after holding for a while
@@ -112,7 +110,7 @@ local function stopHold()
     hold = nil
 end
 
-local function onFrame()
+local function onFrame(dt)
     if not hold then return end
 
     if not input.isMouseButtonPressed(1) then
@@ -120,11 +118,12 @@ local function onFrame()
         return
     end
 
-    local now = core.getRealTime()
-    if now < hold.nextTick then return end
+    local elapsed = hold.elapsed + dt
+    hold.elapsed = elapsed
+    if elapsed < hold.nextTick then return end
 
-    local heldFor = now - hold.repeatStart
-    hold.nextTick = now + (heldFor >= FAST_AFTER and REPEAT_FAST or REPEAT_SLOW)
+    local heldFor = elapsed - HOLD_DELAY
+    hold.nextTick = elapsed + (heldFor >= FAST_AFTER and REPEAT_FAST or REPEAT_SLOW)
 
     local h = hold
     local ok = h.step(h.unitIndex, h.direction)
@@ -219,14 +218,13 @@ local function renderer(value, set, arg)
                     ambient.playSound('menu click', {})
                     local ok = step(i, direction)
                     if ok == false then return end
-                    local now = core.getRealTime()
                     hold = {
                         unitIndex = i,
                         direction = direction,
                         step = step,
                         expected = total(),
-                        repeatStart = now + HOLD_DELAY,
-                        nextTick = now + HOLD_DELAY,
+                        elapsed = 0,
+                        nextTick = HOLD_DELAY,
                     }
                 end),
                 mouseRelease = async:callback(function(e)

@@ -516,7 +516,7 @@ Usage example:
 {
     key = "MY_TIME",
     name = "Time Settings Renderer",
-    renderer = "time_V1",
+    renderer = "time_V2",
     default = 2 * time.day + 5 * time.hour,
     argument = {
         days = true, -- OPTIONAL, set to false to hide the days column. Default: true

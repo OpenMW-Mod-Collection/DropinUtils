@@ -181,7 +181,7 @@ I.Settings.registerGroup({
             key = "MY_TIME",
             name = "time_name",
             description = "time_desc",
-            renderer = "time_V1",
+            renderer = "time_V2",
             default = 2 * time.day + 5 * time.hour,
             argument = {
                 days = true,

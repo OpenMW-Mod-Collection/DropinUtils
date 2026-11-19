@@ -1,5 +1,10 @@
 # Bor's Drop-in Utils (OpenMW)
 
+## 1.3.2
+
+- Time: bumped to version 2
+- Time: optimized the renderer a little
+
 ## 1.3.1
 
 - Order List: bumped to version 2
